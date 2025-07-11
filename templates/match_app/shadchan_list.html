@@ -1,0 +1,117 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Shandchan List{% endblock title %}
+
+{% block content %}
+<style>
+  .table-container {
+    max-height: 1300px;
+    @media screen and (min-width: 1024px) {
+        max-height: 700px;
+    }
+    max-width: 100%;
+    overflow: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+  }
+  
+  .table-container table {
+    width: max-content;
+    min-width: 100%;
+  }
+  
+  .table-container thead {
+    position: sticky;
+    top: 0;
+    background-color: #f9fafb;
+    z-index: 1;
+  }
+
+  .table-container th,
+  .table-container td {
+    white-space: nowrap;
+  }
+
+    .highlight {
+        background-color: lightyellow;
+    }
+
+</style>
+<section class="lg:mx-24 sm:mx-10 my-9 min-h-full flex-grow">
+ {% include "match_app/includes/shadchen_page_header.html" %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full pb-2 align-middle table-container">
+        <table class="min-w-full border-separate border-spacing-0">
+      <thead>
+        <tr>
+          <th scope="col" class="sticky z-0 top-0 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Name</th>
+          <th scope="col" class="sticky z-0 top-0 border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Location</th>
+          <th scope="col" class="sticky z-0 top-0 border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Language</th>
+          <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Sect</th>
+          <th scope="col" class="sticky z-10 top-0 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pr-4 backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
+            <span class="sr-only">Select</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="shadchan_search_results">
+        {% for shadchan in shadchans %}
+        <tr>
+          <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500 border-b border-gray-200">{{shadchan.first_name}}  {{shadchan.last_name}}</td>
+          {% comment %} {{shadchan.shadchan_profile.city}}, TODO: add city when we add a place for the shadchan to add it in there profile page {% endcomment %}
+          <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500 border-b border-gray-200">{{shadchan.shadchan_profile.get_country_display}} </td>
+          {% comment %} <td class="whitespace-nowrap border-b border-gray-200 hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">{{shadchan.profile.language}}</td> {% endcomment %}
+            <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500 border-b border-gray-200">
+              {% for language in shadchan.shadchan_profile.language %}
+                {{ language }}{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                No Language Found
+            {% endfor %}
+            </td>
+            <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500 border-b border-gray-200">
+              {% for sect in shadchan.shadchan_profile.sect %}
+                {{ sect }}{% if not forloop.last %}, {% endif %}
+              {% empty %}
+                No sect Found
+              {% endfor %}
+            </td>
+          {% comment %} TODO: WHEN ACTIVITY RATING IS WORKING UNCOMMENT {% endcomment %}
+          {% comment %} <td class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500">
+            <span class="inline-flex items-center rounded-md  px-2 py-1 text-xs font-medium ring-1 ring-inset 
+              {% if shadchan.shadchan_profile.activity_rating == 0 %} text-gray-700 bg-gray-50 ring-gray-600/20
+              {% elif shadchan.shadchan_profile.activity_rating == 1 %} text-blue-700 bg-blue-50 ring-blue-600/20
+              {% elif shadchan.shadchan_profile.activity_rating == 2 %} text-green-700 bg-green-50 ring-green-600/20
+              {% elif shadchan.shadchan_profile.activity_rating == 3 %} text-yellow-700 bg-yellow-50 ring-yellow-600/20
+              {% endif %}">{{ shadchan.shadchan_profile.get_activity_rating_display }}</span>
+          </td> {% endcomment %}
+          {% comment %} {{shadchan.shadchanprofile.secssesfuly_matches}} {% endcomment %}
+          <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500 border-b border-gray-200">
+            {% comment %} if the shadchan clicks his own profile it should take him to his own profile edit page {% endcomment %}
+            
+            {% if shadchan.id == request.user.id %}
+              <a href="{% url 'shadchan_edit_detail_page' %}" class="text-indigo-600 hover:text-indigo-900">Veiw Your Profile<span class="sr-only"></span></a>
+            {% else %}
+            <a href="{% url 'shadchan_detail' shadchan.id %}" class="text-indigo-600 hover:text-indigo-900">Select<span class="sr-only"></span></a>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+          <tr>
+            <td class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">NO DATA</td>
+            <td class="whitespace-nowrap border-b border-gray-200 hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">NO DATA</td>
+            <td class="whitespace-nowrap border-b border-gray-200 hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">NO DATA</td>
+            <td class="relative whitespace-nowrap border-b border-gray-200 py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-8 lg:pr-8">
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+</div>
+{% include 'match_app/user_pagination.html' with page=shadchans %} 
+</section>
+{% endblock content %}
+

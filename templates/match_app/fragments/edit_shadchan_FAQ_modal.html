@@ -1,0 +1,68 @@
+{% load widget_tweaks %}
+
+<div class="relative z-10"  x-data="{ edit_FAQ: false, init: function() { setTimeout(() => this.edit_FAQ = true, 100); } }" x-init="init()"
+    x-show="edit_FAQ" 
+    x-cloak
+    x-transition:enter="ease-out duration-300" 
+    x-transition:enter-start="opacity-0" 
+    x-transition:enter-end="opacity-100" 
+    x-transition:leave="ease-in duration-200" 
+    x-transition:leave-start="opacity-100" 
+    x-transition:leave-end="opacity-0">
+
+  <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+        x-show="edit_FAQ" 
+        x-cloak
+        x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+        x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+        {% comment %} THE DIFFERENT FRAGMENTS GO HERE WE CREATED A FRAGMENT FOR EVERY FORM ON THIS PAGE THAT IS EDITED WITLH THE MODAL {% endcomment %}
+       <form class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg" method="post" action="{% url 'edit_shadchan_faq' pk %}" x-show="edit_FAQ" x-cloak>
+                {% csrf_token %}
+                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-indigo-600">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                    </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Edit FAQ's</h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">This section allows you to write a Frequently Asked Question (FAQ) for the parents and singels. Please provide clear and concise information to help people understand your services better.</p>
+                    </div>
+                    </div>
+                </div>
+
+
+                <div id="shadchan_faq_fields">
+                    {% include 'includes/form_errors.html' with errors=EDIT_FAQ_FORM.non_field_errors %}
+                    <div class="flex flex-col">
+                         <label for="{{EDIT_FAQ_FORM.question.id_for_label}}" class="block text-sm font-semibold text-gray-700 mt-3">Question</label>
+                        {% render_field EDIT_FAQ_FORM.question class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                        {% include 'includes/form_errors.html' with errors=EDIT_FAQ_FORM.question.errors %}
+                    </div>
+                    <label  class="block text-sm font-semibold text-gray-700 mt-3">Answer</label>
+                    {% render_field EDIT_FAQ_FORM.answer class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" id="edit_FAQ"%}
+                     {% include 'includes/form_errors.html' with errors=EDIT_FAQ_FORM.answer.errors %}
+                    </div>
+                    {{EDIT_FAQ_FORM.media}}
+
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button type="submit" title="Update FAQ" class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto">Update</button>
+                <button type="submit" name="action" value="delete" title="Delete FAQ" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Delete</button>
+                <button @click="edit_FAQ=false" type="button" title="Go Back" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+                </div>
+            </form>
+
+
+    </div>
+  </div>
+</div>

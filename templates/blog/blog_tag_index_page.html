@@ -1,0 +1,25 @@
+{% extends "base/base.html" %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    {% if request.GET.tag %}
+        <h4 class="text-lg font-semibold text-gray-800 mb-4">Showing pages tagged "{{ request.GET.tag }}"</h4>
+    {% endif %}
+
+    <div class="space-y-4">
+        {% for blogpage in blogpages %}
+            <div class="p-4 shadow rounded-lg bg-white">
+                <p class="text-xl font-bold text-indigo-600">
+                    <a href="{% pageurl blogpage %}" class="hover:underline">{{ blogpage.title }}</a>
+                </p>
+                <p class="text-sm text-gray-500">
+                    Revised: <time datetime="{{ blogpage.latest_revision_created_at|date:"c" }}">{{ blogpage.latest_revision_created_at }}</time>
+                </p>
+            </div>
+        {% empty %}
+            <p class="text-gray-700">No pages found with that tag.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

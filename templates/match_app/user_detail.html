@@ -1,0 +1,14 @@
+{% extends 'base/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Profile page{% endblock title %}
+
+{% block content %}
+
+   {% if is_shadchan %}
+      {% include "match_app/includes/shadchan_user_detail.html" %}
+   {% else %}
+      {% include "match_app/includes/public_user_detail.html" %}
+   {% endif %}
+
+{% endblock content %}

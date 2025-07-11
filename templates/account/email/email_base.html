@@ -1,0 +1,62 @@
+
+{% load i18n %}
+{% autoescape off %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Email from {{ site_name }}</title>
+	<style type="text/css">
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			color: #333333;
+		}
+		.container {
+			max-width: 600px;
+			margin: auto;
+			padding: 20px;
+		}
+		.header {
+			background-color: #f8f8f8;
+			padding: 10px;
+			text-align: center;
+			font-size: 24px;
+			color: #333;
+		}
+		.content {
+			padding: 20px;
+		}
+		.footer {
+			background-color: #f8f8f8;
+			padding: 10px;
+			text-align: center;
+			font-size: 12px;
+			color: #666;
+		}
+		a {
+			color: #0066cc;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			{% comment %} {{ site_name }} {% endcomment %}
+            ShidduchMe.com
+		</div>
+		<div class="content">
+			{% block content %}
+            
+            {% endblock content %}
+		</div>
+		<div class="footer">
+			&copy; ShidduchMe.com. All rights reserved.
+		</div>
+	</div>
+</body>
+</html>
+{% endautoescape %}

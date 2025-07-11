@@ -1,0 +1,11 @@
+
+{% comment %} the loginc for 500 is if the user is active he should rerender the page and see a updated info ither way {% endcomment %}
+<span
+    hx-get="{% url 'notification_count' %}"
+    hx-trigger="load delay:60s"
+    hx-swap="outerHTML"
+    {% comment %} class="absolute inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2" {% endcomment %}
+    class="absolute top-[-4px] right-[-2px] inline-block bg-blue-100 text-blue-400 text-xs rounded-full h-5 w-5 text-center leading-5"
+    >
+    {{ total_notifications }}
+</span>

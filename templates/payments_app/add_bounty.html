@@ -1,0 +1,308 @@
+{% extends 'base/base.html' %}
+{% load widget_tweaks %}
+{% load site_tags %}
+{% block title %}Add Bounty{% endblock title %}
+
+{% block content %}
+<style>
+    
+    [x-cloak] {
+      display: none !important;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    }
+
+</style>
+
+
+
+{% if not user.is_authenticated %}
+  <div class="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1" style="padding-top: 25px; padding-bottom: 25px;">
+    <div class="absolute left-[max(-7rem,calc(50%-52rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl" aria-hidden="true">
+      {% comment %} <div class="aspect-[577/310] w-[36.0625rem] bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30" style="clip-path: polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)"></div> {% endcomment %}
+    </div>
+    <div class="absolute left-[max(45rem,calc(50%+8rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl" aria-hidden="true">
+      {% comment %} <div class="aspect-[577/310] w-[36.0625rem] bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30" style="clip-path: polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)"></div> {% endcomment %}
+    </div>
+    <p class="text-sm leading-6 text-gray-900">
+      To submit a bounty please <a href="{% url 'account_login' %}" class="whitespace-nowrap font-semibold text-indigo-600">login<span aria-hidden="true"></span></a> or <a href="{% url 'account_signup' %}" class="whitespace-nowrap font-semibold text-indigo-600">sign up<span aria-hidden="true"></span></a>.
+    </p>
+    <div class="flex flex-1 justify-end">
+      {% comment %} <button type="button" class="-m-3 p-3 focus-visible:outline-offset-[-4px]">
+        <span class="sr-only">Dismiss</span>
+        <svg class="h-5 w-5 text-gray-900" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+        </svg>
+      </button> {% endcomment %}
+    </div>
+  </div>
+{% endif %}
+
+
+<div x-data="{ open: false, single_id: '{{to_user.id|default:''}}'}">
+  {% include "match_app/includes/add_bounty_page_header.html" %}
+  <form method="post" action={{post_to_path}}
+      x-data="{
+        option_selected: {{add_bounty_form.amount.value|default_if_none:50}}, 
+        amount: {{add_bounty_form.amount.value|default_if_none:50}}, 
+        is_monthly: {{add_bounty_form.recurring_payment.value|join:''|str_to_bool}}, 
+        number_of_months: {{add_bounty_form.number_of_months.value|default_if_none:0}}
+        }"
+      class='my-10 mx-14 h-full'>
+    {% csrf_token %}
+    {% include 'includes/form_errors.html' with errors=add_bounty_form.non_field_errors %}
+    {% include 'includes/form_errors.html' with errors=add_bounty_form.captcha.errors %}
+   <div class="space-y-12">
+
+    <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 lg:grid-cols-3">
+      <div>
+        <h2 class="text-base font-semibold leading-7 text-gray-900">Add Bounty</h2>
+        <p class="mt-1 text-sm leading-6 text-gray-600">
+        The bounty will be added to the account of the person you select. In some circles, a bounty is known as "shadchanus gelt". Once we can confirm that a match has been made by the shadchan, we will securely transfer the bounty to them. 
+        <a href="{% url 'faq' %}#how-bountys-work" class="text-indigo-700">You will only be charged the full pledge amount after the match is made.</a>
+        </p>
+      </div>
+    {% comment %} START OF INPUT FIELDS {% endcomment %}
+    <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2 lg:ml-8">
+     
+      {% comment %} START FORM SELECT CHOICES {% endcomment %}
+      <fieldset class="col-span-full">
+        <legend class="sr-only">Bounty amout</legend>
+        <div class="space-y-4">
+
+          <label @click="option_selected = 50, amount = 50" :class="{ 'border-indigo-600 ring-2 ring-indigo-600': option_selected === 50}" class="relative block cursor-pointer rounded-lg border bg-white px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between border-gray-300">
+            <input type="radio" value=50 name="server-size" class="sr-only">
+            <span class="flex items-center">
+              <span class="flex flex-col text-sm">
+                <span id="server-size-0-label" class="font-medium text-gray-900">Friendly Supporter</span>
+                <span id="server-size-0-description-0" class="text-gray-500">
+                  <span class="block sm:inline">Thank you for helping my special day come closer</span>
+                  {% comment %} <span class="block sm:inline">8GB / 4 CPUs</span>
+                  <span class="hidden sm:mx-1 sm:inline" aria-hidden="true">&middot;</span>
+                  <span class="block sm:inline">160 GB SSD disk</span> {% endcomment %}
+                </span>
+              </span>
+            </span>
+            <span id="server-size-0-description-1" class="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
+              <span class="font-medium text-gray-900">$50</span>
+              <span class="ml-1 text-gray-500 sm:ml-0" x-show="is_monthly" title="Recuring Monthly, Add this ammount to the singles bounty every month">/mo</span>
+              {% comment %} <span class="ml-1 text-gray-500 sm:ml-0" x-show="!is_monthly" title="One Time, Add this ammont as a one time bounty">/po</span> {% endcomment %}
+            </span>
+      
+            <span :class="{ 'border-indigo-600 border': option_selected == 50}" class="pointer-events-none absolute -inset-px rounded-lg border-2 border-transparent"aria-hidden="true"></span>
+          </label>
+        
+        <label @click="option_selected = 120, amount = 120" :class="{ 'border-indigo-600 ring-2 ring-indigo-600': option_selected === 120}" class="relative block cursor-pointer rounded-lg border bg-white px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between border-gray-300">
+            <input type="radio" value=120 name="server-size" class="sr-only">
+            <span class="flex items-center">
+              <span class="flex flex-col text-sm">
+                <span id="server-size-1-label" class="font-medium text-gray-900">Executive Supporter</span>
+                <span id="server-size-1-description-0" class="text-gray-500">
+                  <span class="block sm:inline">Thank you for helping my special day come closer</span>
+                  {% comment %} <span class="block sm:inline">12GB / 6 CPUs</span>
+                  <span class="hidden sm:mx-1 sm:inline" aria-hidden="true">&middot;</span>
+                  <span class="block sm:inline">256 GB SSD disk</span> {% endcomment %}
+                </span>
+              </span>
+            </span>
+            <span id="server-size-1-description-1" class="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
+              <span class="font-medium text-gray-900">$120</span>
+              <span class="ml-1 text-gray-500 sm:ml-0" x-show="is_monthly" title="Recuring Monthly, Add this ammount to the singles bounty every month">/mo</span>
+              {% comment %} <span class="ml-1 text-gray-500 sm:ml-0" x-show="!is_monthly" title="One Time, Add this ammont as a one time bounty">/po</span> {% endcomment %}
+            </span>
+
+            <span :class="{ 'border-indigo-600 border': option_selected == 120}" class="pointer-events-none absolute -inset-px rounded-lg border-2 border-transparent" aria-hidden="true"></span>
+          </label>
+          
+          <label @click="option_selected = 200, amount = 200" :class="{ 'border-indigo-600 ring-2 ring-indigo-600': option_selected === 200, 'border-gray-300': option_selected !== 200 }" class="relative block cursor-pointer rounded-lg border bg-white px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between">
+            <input type="radio" name="200" value=200 class="sr-only">
+            <span class="flex items-center">
+              <span class="flex flex-col text-sm">
+                <span id="server-size-2-label" class="font-medium text-gray-900">Prime Supporter</span>
+                <span class="block sm:inline">Your generous support brings us significantly closer to our special day!</span>
+                {% comment %} <span id="server-size-2-description-0" class="text-gray-500">
+                  <span class="block sm:inline">16GB / 8 CPUs</span>
+                  <span class="hidden sm:mx-1 sm:inline" aria-hidden="true">&middot;</span>
+                  <span class="block sm:inline">512 GB SSD disk</span>
+                </span> {% endcomment %}
+              </span>
+            </span>
+            <span id="server-size-2-description-1" class="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
+              <span class="font-medium text-gray-900">$200</span>
+              <span class="ml-1 text-gray-500 sm:ml-0" x-show="is_monthly" title="Recuring Monthly, Add this ammount to the singles bounty every month">/mo</span>
+              {% comment %} <span class="ml-1 text-gray-500 sm:ml-0" x-show="!is_monthly" title="One Time, Add this ammont as a one time bounty">/po</span> {% endcomment %}
+            </span>
+        
+            <span :class="{ 'border-indigo-600 border': option_selected == 200}" class="pointer-events-none absolute -inset-px rounded-lg border-2 border-transparent" aria-hidden="true"></span>
+          </label>
+        
+        <label @click="option_selected = 250, amount = 250" :class="{ 'border-indigo-600 ring-2 ring-indigo-600': option_selected > 249}" class="relative block cursor-pointer rounded-lg border bg-white px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between border-gray-300">
+            <input type="radio" value=250 name="custome" class="sr-only">
+            <span class="flex items-center">
+              <span class="flex flex-col text-sm">
+                <span id="server-size-3-label" class="font-medium text-gray-900">Elite Benefactor</span>
+                <span class="block sm:inline">Your extraordinary generosity brings us significantly closer to our special day!</span>
+                {% comment %} <span id="server-size-3-description-0" class="text-gray-500">
+                  <span class="block sm:inline">32GB / 12 CPUs</span>
+                  <span class="hidden sm:mx-1 sm:inline" aria-hidden="true">&middot;</span>
+                  <span class="block sm:inline">1024 GB SSD disk</span>
+                </span> {% endcomment %}
+              </span>
+            </span>
+            <span id="server-size-3-description-1" class="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right">
+              <span class="font-medium text-gray-900">$250</span>
+              <span class="ml-1 text-gray-500 sm:ml-0" x-show="is_monthly" title="Recurring Monthly, Add this amount to the singles bounty every month">/mo</span>
+              {% comment %} <span class="ml-1 text-gray-500 sm:ml-0" x-show="!is_monthly" title="One Time, Add this ammont as a one time bounty">/po</span> {% endcomment %}
+            </span>
+            
+            <span :class="{ 'border-indigo-600 border': option_selected > 249}" class="pointer-events-none absolute -inset-px rounded-lg border-2 border-transparent" aria-hidden="true"></span>
+          </label>
+        </div>
+      </fieldset>
+      
+   
+
+        <div x-show="option_selected > 249" x-cloak class="col-span-full">
+          <label for="price" class="block text-sm font-medium leading-6 text-gray-900">Custome Amount</label>
+          <div class="relative mt-2 rounded-md shadow-sm">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <span class="text-gray-500 sm:text-sm">$</span>
+            </div>
+            <input type="number" min="250" max="1000" class="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"x-bind:disabled="option_selected < 250" x-model="amount"> 
+            {% comment %} <div class="absolute inset-y-0 right-0 flex items-center">
+              <label for="currency" class="sr-only">Currency</label>
+              <select id="currency" name="currency" class="h-full rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
+                <option>USD</option>
+                <option>CAD</option>
+                <option>EUR</option>
+              </select>
+            </div> {% endcomment %}
+          </div>
+          {% include 'includes/form_errors.html' with errors=add_bounty_form.amount.errors %}
+        </div>
+
+
+
+
+
+
+
+      {% if we_need_givers_name %}   
+        <div class="sm:col-span-3">
+          <label for="{{add_bounty_form.first_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">Your first Name</label>
+          {% render_field add_bounty_form.first_name class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+          {% include 'includes/form_errors.html' with errors=add_bounty_form.first_name.errors %}
+        </div>
+        <div class="sm:col-span-3">
+          <label for="{{add_bounty_form.last_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">Your last Name</label>
+          {% render_field add_bounty_form.last_name class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+          {% include 'includes/form_errors.html' with errors=add_bounty_form.last_name.errors %}
+        </div>
+      {% endif %}
+
+
+      <div class="relative flex items-start col-span-full">
+        <div class="flex h-6 items-center" @click="number_of_months = ''" >
+          {% render_field add_bounty_form.recurring_payment x-model::checked="is_monthly" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" %}
+        </div>
+        <div class="ml-3 text-sm leading-6">
+          <label for="comments" class="font-medium text-gray-900">Make This a Monthly Bounty</label>
+          <p id="comments-description" class="text-gray-500">Every month this single is not married i would like to add the above amount to there bounty.</p>
+        </div>
+      </div>
+
+
+
+      <div class="col-span-full"  x-bind:class="{ 'opacity-25 pointer-events-none': !is_monthly }">
+        <label for="{{add_bounty_form.number_of_months.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">Number of Months</label>
+        <div class="relative mt-2 rounded-md shadow-sm">
+          {% render_field add_bounty_form.number_of_months class="block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" x-model::value="number_of_months"  x-bind::disabled="!is_monthly" placeholder="6 months"%}
+          <div class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer tooltip">
+            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM8.94 6.94a.75.75 0 11-1.061-1.061 3 3 0 112.871 5.026v.345a.75.75 0 01-1.5 0v-.5c0-.72.57-1.172 1.081-1.287A1.5 1.5 0 108.94 6.94zM10 15a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+            </svg>
+            <span class="tooltiptext rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset" style="width: 120px; margin-left: -50px;"> {{add_bounty_form.number_of_months.help_text}}</span>
+          </div>
+        </div>
+        {% include 'includes/form_errors.html' with errors=add_bounty_form.number_of_months.errors %}
+      </div>
+
+
+
+
+
+  </div>
+  {% comment %} END OF INPUT FIELDS {% endcomment %}
+</div>
+
+
+
+{% render_field add_bounty_form.amount  x-model::value="amount" %}
+{% render_field add_bounty_form.single_id x-model::value="single_id" %}
+{{ add_bounty_form.captcha }}
+<div class="mt-6 flex items-center justify-end gap-x-6">
+
+  <button type="submit" id="submit_bounty_button" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" x-show="single_id">Checkout</button>
+  <div class="mt-5 flex lg:ml-4 lg:mt-0" x-show="!single_id">
+    {% if user.is_authenticated %}
+        <span class="hidden sm:block" @click="open = true">
+            <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+                Search
+            </button>
+        </span>
+    {% else %}
+        {% comment %} <div x-data="{showLoginMessage: false}">
+            <span class="hidden sm:block" @click.prevent="showLoginMessage = true">
+                <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                    <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                    Search
+                </button>
+            </span>
+            <p x-show="showLoginMessage" x-cloak class="text-red-500">To perform a search, please <a href="{% url 'account_login' %}" class="font-semibold text-indigo-600 hover:text-indigo-500">login</a> or <a href="{% url 'account_signup' %}" class="font-semibold text-indigo-600 hover:text-indigo-500">sign up</a>.</p>
+        </div> {% endcomment %}
+    {% endif %}
+
+  </div>
+</div>
+</div>
+
+</form>
+</div>
+{% endblock content %}
+
+
+
+
+
+
+
+              {% comment %} JS TOGGLE SWITCH CAN USE IF SEE NEED {% endcomment %}
+              {% comment %} <div class="flex items-center" x-data="{ enabled: false }">
+                <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
+                <button type="button" :class="{ 'bg-indigo-600': enabled, 'bg-gray-200': !enabled }" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2" role="switch" :aria-checked="enabled" aria-labelledby="annual-billing-label" @click="enabled = !enabled">
+                  <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+                  <span aria-hidden="true" :class="{ 'translate-x-5': enabled, 'translate-x-0': !enabled }" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+                </button>
+                <span class="ml-3 text-sm" id="annual-billing-label">
+                  <span class="font-medium text-gray-900">monthly billing</span>
+                  <span class="text-gray-500">(Save 10%)</span>
+                </span>
+              </div> {% endcomment %}
+
+
+                    {% comment %} <label for="{{add_bounty_form.recurring_payment.id_for_label}}" class="text-xs font-semibold px-1">Add This Amount monthly</label>
+                    {% render_field add_bounty_form.recurring_payment %}
+                    {% include 'includes/form_errors.html' with errors=add_bounty_form.recurring_payment.errors %} {% endcomment %}

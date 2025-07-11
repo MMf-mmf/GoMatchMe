@@ -1,0 +1,323 @@
+{% extends 'base/base.html' %}
+{% load static %} 
+{% block title%}ShidduchMe{% endblock title %} {% block content %}
+<style>
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-fade-in-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animation-delay-300 {
+  transition-delay: 300ms;
+}
+
+.animation-delay-500 {
+  transition-delay: 500ms;
+}
+
+.animation-delay-700 {
+  transition-delay: 700ms;
+}
+
+.animation-delay-1000 {
+  transition-delay: 1000ms;
+}
+</style>
+
+
+<div class="bg-white">
+  <main class="isolate">
+    <!-- Hero section -->
+    <div class="relative pt-14">
+      <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+        <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+      </div>
+      <div class="py-24 sm:py-32">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+          <div class="mx-auto max-w-2xl text-center">
+            <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-4 animate-fade-in-up">Leverage Community, Empower Matchmakers</h1>
+            <p class="text-lg font-semibold text-indigo-600 animate-fade-in-up animation-delay-300">It's time to transform the matchmaking experience</p>
+            <p class="mt-6 text-lg leading-8 text-gray-600 animate-fade-in-up animation-delay-500">Connect singles with their perfect match by leveraging community suggestions and incentivizing successful matchmakers with bounties.</p>
+            <div class="mt-10 flex items-center justify-center gap-x-6 animate-fade-in-up animation-delay-700">
+              <a href="{% url 'account_signup' %}" class="rounded-md bg-rose-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-rose-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 transition-all duration-300 ease-in-out transform hover:scale-105">Start Matchmaking</a>
+              <a href="#faq_section" class="text-sm font-semibold leading-6 text-gray-900 hover:text-indigo-600 transition-colors duration-300">Learn more <span aria-hidden="true" class="inline-block transition-transform duration-300 ease-in-out transform group-hover:translate-x-1">→</span></a>
+            </div>
+          </div>
+          <div class="mt-16 flow-root sm:mt-24">
+            {% comment %} old image for reference and can be removed as soon as the iframe is 100% working {% endcomment %}
+            {% comment %} 
+            <div class="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4 animate-fade-in-up">
+              <img src="static/images/shidduchme_project_image.png" alt="App screenshot" width="2432" height="1442" class="rounded-md shadow-2xl ring-1 ring-gray-900/10">
+            </div>
+            {% endcomment %}
+            <div class="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4 animate-fade-in-up">
+              <div class="relative w-full" style="padding-top: 56.25%;">
+              <iframe 
+                  src="https://www.youtube.com/embed/81Ivx1Utl1U" 
+                  frameborder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowfullscreen 
+                  class="absolute top-0 left-0 w-full h-full rounded-md shadow-2xl ring-1 ring-gray-900/10"
+                ></iframe> 
+                {% comment %} <img src="{% static 'images/coming_soon.jpeg' %}" class="absolute top-0 left-0 w-full h-full rounded-md shadow-2xl ring-1 ring-gray-900/10"></img> {% endcomment %}
+              </div>
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+      <div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
+        <div class="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+      </div>
+    </div>
+
+<!-- Feature section -->
+<div class="mx-auto mt-32 max-w-7xl px-6 sm:mt-56 lg:px-8">
+  <div class="mx-auto max-w-2xl lg:text-center animate-fade-in-up">
+    <h2 class="text-base font-semibold leading-7 text-indigo-600">Revolutionize Matchmaking</h2>
+    <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Harness the Power of Community and Incentives</p>
+    <p class="mt-6 text-lg leading-8 text-gray-600">Our platform combines community suggestions with innovative bounty systems to create a new era of successful matchmaking.</p>
+  </div>
+  <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
+    <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
+      <div class="relative pl-16 animate-fade-in-up">
+        <dt class="text-base font-semibold leading-7 text-gray-900">
+          <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-rose-600">
+            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+            </svg>
+          </div>
+          Community-Driven Suggestions
+        </dt>
+        <dd class="mt-2 text-base leading-7 text-gray-600">Empower users to suggest potential matches for singles, tapping into the collective wisdom and networks of the community.</dd>
+      </div>
+      <div class="relative pl-16 animate-fade-in-up animation-delay-300">
+        <dt class="text-base font-semibold leading-7 text-gray-900">
+          <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-rose-600">
+            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          Innovative Bounty System
+        </dt>
+        <dd class="mt-2 text-base leading-7 text-gray-600">Implement a unique bounty system where users can contribute to a single's match fund, incentivizing successful matchmakers.</dd>
+      </div>
+      <div class="relative pl-16 animate-fade-in-up animation-delay-500">
+        <dt class="text-base font-semibold leading-7 text-gray-900">
+          <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-rose-600">
+            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+            </svg>
+          </div>
+          Matchmaker Dashboard
+        </dt>
+        <dd class="mt-2 text-base leading-7 text-gray-600">Provide professional matchmakers with a comprehensive view of community suggestions and potential matches to facilitate successful connections.</dd>
+      </div>
+      <div class="relative pl-16 animate-fade-in-up animation-delay-700">
+        <dt class="text-base font-semibold leading-7 text-gray-900">
+          <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-rose-600">
+            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+          </div>
+          Secure and Private Matching
+        </dt>
+        <dd class="mt-2 text-base leading-7 text-gray-600">Ensure the utmost privacy and security throughout the suggestion and matching process, protecting user information and preferences.</dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+<!-- Testimonial section -->
+<div class="relative isolate bg-white pb-32 pt-24 sm:pt-32">
+  <div class="absolute inset-x-0 top-1/2 -z-10 -translate-y-1/2 transform-gpu overflow-hidden opacity-30 blur-3xl" aria-hidden="true">
+    <div class="ml-[max(50%,38rem)] aspect-[1313/771] w-[82.0625rem] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+  </div>
+  <div class="absolute inset-x-0 top-0 -z-10 flex transform-gpu overflow-hidden pt-32 opacity-25 blur-3xl sm:pt-40 xl:justify-end" aria-hidden="true">
+    <div class="ml-[-22rem] aspect-[1313/771] w-[82.0625rem] flex-none origin-top-right rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] xl:ml-0 xl:mr-[calc(50%-12rem)]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+  </div>
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-xl text-center">
+      <h2 class="text-lg font-semibold leading-8 tracking-tight text-indigo-600">Testimonials</h2>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Hear from our early adapters</p>
+    </div>
+    <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 grid-rows-1 gap-8 text-sm leading-6 text-gray-900 sm:mt-20 sm:grid-cols-2 xl:mx-0 xl:max-w-none xl:grid-flow-col xl:grid-cols-4">
+      <figure class="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5 sm:col-span-2 xl:col-start-2 xl:row-end-1">
+        <blockquote class="p-6 text-lg font-semibold leading-7 tracking-tight text-gray-900 sm:p-12 sm:text-xl sm:leading-8">
+          <p>“ShidduchMe represents a revolutionary approach to shidduchim. By leveraging technology while respecting our traditions, this platform has the potential to transform how our community approaches matchmaking.”</p>
+        </blockquote>
+        <figcaption class="flex flex-wrap items-center gap-x-4 gap-y-4 border-t border-gray-900/10 px-6 py-4 sm:flex-nowrap">
+          <img class="h-10 w-10 flex-none rounded-full bg-gray-50 " src="{% static 'images/boysAvatar.jpg' %}" alt="">
+          <div class="flex-auto">
+            <div class="font-semibold">Rabbi David Cohen</div>
+            <div class="text-gray-600">Community Leader, Brooklyn NY</div>
+          </div>
+          {% comment %} <img class="h-10 w-auto flex-none" src="https://tailwindui.com/img/logos/savvycal-logo-gray-900.svg" alt=""> {% endcomment %}
+        </figcaption>
+      </figure>
+      <div class="space-y-8 xl:contents xl:space-y-0">
+        <div class="space-y-8 xl:row-span-2">
+          <figure class="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-900/5">
+            <blockquote class="text-gray-900">
+              <p>“As someone who has been involved in shidduchim for over two decades, I'm excited to see technology being used to enhance our traditional matchmaking process. The bounty system is particularly innovative.”</p>
+            </blockquote>
+            <figcaption class="mt-6 flex items-center gap-x-4">
+              <img class="h-10 w-10 rounded-full bg-gray-50" src="{% static 'images/girlsAvatar.jpg' %}" alt="">
+              <div>
+                <div class="font-semibold">Mrs. Sarah Goldstein</div>
+                <div class="text-gray-600">Professional Shadchan</div>
+              </div>
+            </figcaption>
+          </figure>
+
+          <!-- More testimonials... -->
+        </div>
+        <div class="space-y-8 xl:row-start-1">
+          <figure class="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-900/5">
+            <blockquote class="text-gray-900">
+              <p>“The idea of community members being able to suggest matches and support singles through bounties shows true understanding of our community's needs.”</p>
+            </blockquote>
+            <figcaption class="mt-6 flex items-center gap-x-4">
+              <img class="h-10 w-10 rounded-full bg-gray-50" src="{% static 'images/boysAvatar.jpg' %}" alt="">
+              <div>
+                <div class="font-semibold">Moshe Bernstein</div>
+                <div class="text-gray-600">Community Activist</div>
+              </div>
+            </figcaption>
+          </figure>
+
+          <!-- More testimonials... -->
+        </div>
+      </div>
+      <div class="space-y-8 xl:contents xl:space-y-0">
+        <div class="space-y-8 xl:row-start-1">
+          <figure class="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-900/5">
+            <blockquote class="text-gray-900">
+              <p>“This platform gives our community a powerful tool to help singles find their bashert. It's heartwarming to see technology being used to strengthen our traditional values.”</p>
+            </blockquote>
+            <figcaption class="mt-6 flex items-center gap-x-4">
+              <img class="h-10 w-10 rounded-full bg-gray-50" src="{% static 'images/girlsAvatar.jpg' %}" alt="">
+              <div>
+                <div class="font-semibold">Rebbetzin Rachel Levy</div>
+                <div class="text-gray-600">Matchmaking Mentor</div>
+              </div>
+            </figcaption>
+          </figure>
+
+          <!-- More testimonials... -->
+        </div>
+        <div class="space-y-8 xl:row-span-2">
+          <figure class="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-900/5">
+            <blockquote class="text-gray-900">
+              <p>“As a software developer in our community, I'm impressed by how ShidduchMe combines modern technology with our cherished matchmaking traditions. It's exactly what we needed - a bridge between the old and the new.”</p>
+            </blockquote>
+            <figcaption class="mt-6 flex items-center gap-x-4">
+              <img class="h-10 w-10 rounded-full bg-gray-50" src="{% static 'images/boysAvatar.jpg' %}" alt="">
+              <div>
+                <div class="font-semibold">Yosef Stern</div>
+                <div class="text-gray-600">Tech Professional</div>
+              </div>
+            </figcaption>
+          </figure>
+
+          <!-- More testimonials... -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- FAQs -->
+<div  class="mx-auto max-w-2xl divide-y divide-gray-900/10 px-6 pb-8 sm:pb-24 lg:max-w-7xl lg:px-8 lg:pb-32 py-24 sm:pt-48 animate-fade-in-up">
+  <h2 id="faq_section" class="text-2xl font-bold leading-10 tracking-tight text-indigo-600">Frequently asked questions</h2>
+  <dl class="mt-10 space-y-8 divide-y divide-gray-900/10">
+    <div class="pt-8 lg:grid lg:grid-cols-12 lg:gap-8">
+      <dt class="text-base font-semibold leading-7 text-gray-900 lg:col-span-5">Is ShidduchMe a Non-Profit Organization?</dt>
+      <dd class="mt-4 lg:col-span-7 lg:mt-0">
+        <p class="text-base leading-7 text-gray-600">Yes, ShidduchMe is a non-profit organization dedicated to serving our community. Every penny we receive goes directly towards basic website maintenance and the development of innovative tools. We're committed to creating groundbreaking solutions that our community truly deserves, Our goal is to help you make more informed decisions, and ultimately increase success rates in creating lasting connections, all while operating as a non-profit entity.</p>
+      </dd>
+    </div>
+
+    <div class="pt-8 lg:grid lg:grid-cols-12 lg:gap-8">
+      <dt class="text-base font-semibold leading-7 text-gray-900 lg:col-span-5">Is my data secure on ShidduchMe?</dt>
+      <dd class="mt-4 lg:col-span-7 lg:mt-0">
+        <p class="text-base leading-7 text-gray-600">Absolutely. We prioritize data security and privacy. Our platform uses state-of-the-art encryption and follows strict data protection regulations. We never share your information with third parties, ensuring the confidentiality and trust that is crucial in the matchmaking industry.</p>
+      </dd>
+    </div>
+
+    <div class="pt-8 lg:grid lg:grid-cols-12 lg:gap-8">
+      <dt class="text-base font-semibold leading-7 text-gray-900 lg:col-span-5">Who can view a single's profile on ShidduchMe?</dt>
+      <dd class="mt-4 lg:col-span-7 lg:mt-0">
+        <p class="text-base leading-7 text-gray-600">Only verified Shadchanim can view singles' profiles on ShidduchMe. All Shadchanim on our platform undergo a thorough background check to ensure they are trustworthy and qualified to view any single's profile on the site.</p>
+      </dd>
+    </div>
+
+  </dl>
+</div>
+
+<!-- CTA section -->
+<div class="relative -z-10 mt-32 px-6 lg:px-8 animate-fade-in-up">
+  <div class="absolute inset-x-0 top-1/2 -z-10 flex -translate-y-1/2 transform-gpu justify-center overflow-hidden blur-3xl sm:bottom-0 sm:right-[calc(50%-6rem)] sm:top-auto sm:translate-y-0 sm:transform-gpu sm:justify-end" aria-hidden="true">
+    <div class="aspect-[1108/632] w-[69.25rem] flex-none bg-gradient-to-r from-[#ff6b6b] to-[#4ecdc4] opacity-25" style="clip-path: polygon(73.6% 48.6%, 91.7% 88.5%, 100% 53.9%, 97.4% 18.1%, 92.5% 15.4%, 75.7% 36.3%, 55.3% 52.8%, 46.5% 50.9%, 45% 37.4%, 50.3% 13.1%, 21.3% 36.2%, 0.1% 0.1%, 5.4% 49.1%, 21.4% 36.4%, 58.9% 100%, 73.6% 48.6%)"></div>
+  </div>
+  <div class="mx-auto max-w-2xl text-center">
+    <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl animate-fade-in-up">Make sure the people you care about<br>are never left behind.</h2>
+    <p class="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-600 animate-fade-in-up animation-delay-300">Join our community and make a meaningful impact on the lives of others.</p>
+    <div class="mt-10 mb-20 flex items-center justify-center gap-x-6 animate-fade-in-up animation-delay-500">
+      <a href="{% url 'account_signup' %}" class="rounded-md bg-rose-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-rose-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 transition-all duration-300 ease-in-out transform hover:scale-105">SignUp Now</a>
+      <a href="{% url 'faq'%}#how-bountys-work" class="text-sm font-semibold leading-6 text-gray-900 hover:text-indigo-600 transition-colors duration-300">How it works <span aria-hidden="true" class="inline-block transition-transform duration-300 ease-in-out transform group-hover:translate-x-1">→</span></a>
+    </div>
+  </div>
+  <div class="absolute left-1/2 right-0 top-full -z-10 hidden -translate-y-1/2 transform-gpu overflow-hidden blur-3xl sm:block" aria-hidden="true">
+    <div class="aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-[#ff6b6b] to-[#4ecdc4] opacity-30" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+  </div>
+</div>
+  </main>
+
+  
+  </div>
+</div>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+  const animatedElements = document.querySelectorAll('.animate-fade-in-up');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+      }
+    });
+  }, {
+    threshold: 0.1
+  });
+
+  animatedElements.forEach(el => observer.observe(el));
+});
+</script>
+
+   
+
+
+{% endblock content %}

@@ -1,0 +1,11 @@
+{% extends 'emails/base/email_base.html' %}
+
+{% block content %}
+
+<h1>Unable to Contact Shadchan</h1>
+<p>Hello {{ to_user.first_name }}.</p>
+<p>Unfortunately, Shadchan <b>{{ shadchan_user.first_name }} {{ shadchan_user.last_name }}</b> is not accepting new contact requests at this time.</p>
+<p>Please try contacting other shadchanim, and you may retry contacting this shadchan in a few weeks to see if they have more availability.</p>
+<p>Thank you for using ShidduchMe.</p>
+{% endblock content%}
+

@@ -1,0 +1,38 @@
+{% extends 'emails/base/email_base.html' %}
+
+{% comment %} {% block title %}Control Center{% endblock title %} {% endcomment %}
+
+{% block content %}
+
+            <h1>Suggestion Received</h1>
+            <p>Dear {{ suggestion.made_by.first_name }},</p>
+            <p>Thank you for your suggestion!</p>
+            <p>We have received your suggestion for:</p>
+            <p><b>{{ suggestion.girls_first_name }} {{ suggestion.girls_last_name }}</b> to match with <b>{{ suggestion.boys_first_name }} {{ suggestion.boys_last_name }}</b>.</p>
+            <p><b>Your message to shadchonim</b></p>
+            <p>{{ suggestion.message }}</p>
+            <p><b>Details:</b></p>
+            <ul>
+                <li><b>Boy's Age:</b> {{ suggestion.boys_age }}</li>
+                <li><b>Boy's Country:</b> {{ suggestion.boys_country }}</li>
+                <li><b>Boy's City:</b> {{ suggestion.boys_city }}</li>
+                <li><b>Girl's Age:</b> {{ suggestion.girls_age }}</li>
+                <li><b>Girl's Country:</b> {{ suggestion.girls_country }}</li>
+                <li><b>Girl's City:</b> {{ suggestion.girls_city }}</li>
+                {% comment %} <li><b>Ranking:</b> {{ suggestion.get_ranking_display }}</li> {% endcomment %}
+                <li><b>Amount:</b> ${{ suggestion.amount }}</li>
+            </ul>
+            {% if suggestion.tagged_users.count > 0 %}
+                <p><b>Tagged Shadchonim:</b></p>
+                <ul>
+                    {% for shadchan in suggestion.tagged_users.all %}
+                        <li>{{ shadchan.first_name }} {{ shadchan.last_name }}</li>
+                    {% endfor %}
+                </ul>
+                <p>All the above Shadchanim have been notified of your suggestion.</p>
+            {% endif %}
+            <p>To view the full suggestion, please click <a href="{{ your_suggestions_url }}">here</a>.</p>
+            <br>
+            <p>Best regards,</p>
+            <p>The ShidduchMe Team</p>
+{% endblock content %}

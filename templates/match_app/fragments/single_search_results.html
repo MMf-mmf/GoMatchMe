@@ -1,0 +1,93 @@
+   {% load static %}
+   {% load mathfilters %}      
+      
+      {% if result_count > 0 %}
+        <div class="flex transform-gpu divide-x divide-gray-100" id="search-results" x-data="{ selected_id: null }" x-init="selected_id = 1">
+            <!-- Preview Visible: "sm:h-96" -->
+            <div class="max-h-96 min-w-0 flex-auto scroll-py-4 overflow-y-auto px-6 py-4 sm:h-96">
+            <!-- Default state, show/hide based on command palette state. -->
+            {% comment %} 
+            RENDER A LIST OF MOST RECENT SEARCHES, THIS LIST SHOULD ONLY BE VISIBLE IF THE SEARCH BAR IS EMPTY
+            <h2 class="mb-4 mt-2 text-xs font-semibold text-gray-500">Recent searches</h2>
+            <ul class="-mx-2 text-sm text-gray-700" id="recent" role="listbox">
+                <!-- Active: "bg-gray-100 text-gray-900" -->
+                <li class="group flex cursor-default select-none items-center rounded-md p-2" id="recent-1" role="option" tabindex="-1">
+                <img src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="h-6 w-6 flex-none rounded-full">
+                <span class="ml-3 flex-auto truncate">Floyd Miles</span>
+                <!-- Not Active: "hidden" -->
+                <svg class="ml-3 hidden h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                </svg>
+                </li>
+            </ul> 
+            {% endcomment %}
+            <!-- Results, show/hide based on command palette state. -->
+            <ul class="-mx-2 text-sm text-gray-700" id="options" role="listbox">
+                <!-- Active: "bg-gray-100 text-gray-900" -->
+                {% for single in search_results %}
+                  <li class="group flex cursor-pointer select-none items-center rounded-md p-2" :class="{ 'bg-gray-100 text-gray-900': selected_id=={{forloop.counter}} }" role="option" tabindex="-1" x-on:mouseenter="selected_id = {{forloop.counter}}">
+                    <a href="{% url 'user_detail' single.id %}" class="flex items-center w-full">
+                        {% if single.profile.image %}
+                            <img src="{{single.profile.image.url}}" alt="" class="h-6 w-6 flex-none rounded-full">
+                        {% else %}
+                            <img src="{% if single.gender == 1 %}{% static 'images/boysAvatar.jpg' %}{% else %}{% static 'images/girlsAvatar.jpg' %}{% endif %}" alt="" class="h-6 w-6 flex-none rounded-full">
+                        {% endif %}
+                        <span class="ml-3 flex-auto truncate">{{single.first_name}} {{single.last_name}}</span>
+                        <!-- Not Active: "hidden" -->
+                        <svg class="ml-3 h-5 w-5 flex-none text-gray-400" x-show="selected_id=={{forloop.counter}}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            </div>
+
+            <!-- Active item side-panel, show/hide based on active state -->
+            {% for single in search_results %}
+            <div class="h-96 w-1/2 flex-none flex-col divide-y divide-gray-100 overflow-y-auto sm:flex" x-show="selected_id=={{forloop.counter}}">
+            <div class="flex-none p-6 text-center">
+              {% if single.profile.image %}
+                <img src="{{single.profile.image.url}}" alt="" class="mx-auto h-16 w-16 rounded-full">
+              {% else %}
+                 <img src="{% if single.gender == 1 %}{% static 'images/boysAvatar.jpg' %}{% else %}{% static 'images/girlsAvatar.jpg' %}{% endif %}" alt="" class="mx-auto h-16 w-16 rounded-full">
+              {% endif %}
+                <h2 class="mt-3 font-semibold text-gray-900">{{single.first_name}} {{single.last_name}}</h2>
+                {% for sect in single.profile.sect %}
+                    <span class="text-sm leading-6 text-gray-500">{{ sect }}{% if not forloop.last %},{% endif %}</span>
+                {% endfor %}
+            </div>
+            <div class="flex flex-auto flex-col justify-between p-5">
+              <dl class="grid grid-cols-1 gap-x-5 gap-y-2 text-sm text-gray-700">
+                <dt class="col-end-1 font-semibold text-gray-900">Age:</dt>
+                {% now "Y" as current_year %}
+                {% with birth_year=single.profile.date_of_birth|date:"Y" %}
+                {% with age=current_year|sub:birth_year %}
+                  <dd>{{age}}</dd>
+                {% endwith %}
+                {% endwith %}
+                <dt class="col-end-1 font-semibold text-gray-900">Parents:</dt>
+                <dd class="truncate">{{single.profile.mothers_first_name}} and {{single.profile.fathers_first_name}}</dd>
+                <dt class="col-end-1 font-semibold text-gray-900">Location:</dt>
+                <dd class="truncate">{{single.profile.country}}, {{single.profile.city}}</dd>
+                </dl>
+              <span class="isolate inline-flex rounded-md shadow-sm mt-2">
+                <a href="{% url 'make_suggestion_for' single.id %}" type="button" class=" w-full relative items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10 text-center" title="Make a suggestion">Make Suggestion</a>
+                <a href="{% url 'add_bounty_to_user' single.id %}" type="button" class=" w-full text-center relative -ml-px items-center rounded-r-md  bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10" title="Add a bounty to this singles profile">Add Bounty</a>
+              </span>
+              {% comment %} <a href="{% url 'select_shadchan_list_for_single' single.id %}" type="button" class=" w-full text-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" title="Contact a shadchan to make a shiduch for this single">Contact Shadchen</a> {% endcomment %}
+              <a href="{% url 'user_detail' single.id %}" type="button" class=" w-full text-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" title="Contact a shadchan to make a shiduch for this single">View Profile</a>
+            </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+      <!-- Empty state, show/hide based on command palette state -->
+      <div id="search-results" class="px-6 py-14 text-center text-sm sm:px-14">
+        <svg class="mx-auto h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+        </svg>
+        <p class="mt-4 font-semibold text-gray-900">No people found</p>
+        <p class="mt-2 text-gray-500">We couldn’t find anything with that term. Please try again.</p>
+      </div>
+    {% endif %}

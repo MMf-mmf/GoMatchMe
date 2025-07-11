@@ -1,0 +1,75 @@
+{% extends 'base/duplicate_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load notifications_tags %}
+
+{% block title %}Control Center{% endblock title %}
+
+{% block content %}
+
+<style>
+    tr.htmx-swapping td {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+    }
+</style>
+
+<div class="mx-auto max-w-7xl pt-0 lg:flex lg:gap-x-10 lg:px-8 h-full">
+{% include "includes/settings_side_menu.html" %}
+<section class="px-4 py-6 sm:px-6 lg:flex-auto lg:px-0 lg:py-10">
+ {% include "match_app/includes/shadchan_contact_requests_page_header.html" %}
+<div>
+<div class="mt-8 flow-root">
+<div class="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
+  <div class="inline-block min-w-full py-2 align-middle">
+    <table class="min-w-full border-separate border-spacing-0">
+      <thead>
+        <tr>
+          <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8">Name</th>
+          <th scope="col" class="sticky top-0 z-10 hidden border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:table-cell">Note</th>
+          <th scope="col" class="sticky top-0 z-10 hidden border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter lg:table-cell">Date</th>
+          {% comment %} <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Status</th> {% endcomment %}
+          <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-1 backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
+            <span class="sr-only">Accept</span>
+          </th>
+          <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-1 pr-4 backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
+            <span class="sr-only ml-1">Deny</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="contact_request">
+        {% for contact_request in unanswered_requests %}
+        <tr>
+          <td class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">{{contact_request.from_user.first_name}}  {{contact_request.from_user.last_name}}</td>
+          <td class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500 sm:table-cell">{{contact_request.message}}</td>
+          <td class="whitespace-nowrap border-b border-gray-200 hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">{{contact_request.created}}</td>     
+        <td class="relative whitespace-nowrap border-b border-gray-200 py-4 text-right text-sm font-medium">
+            <button hx-post="{% url 'shadchan_contact_requests' %}?request_id={{ contact_request.id }}&action=approve" hx-target="closest tr" hx-swap="outerHTML swap:1s" class="text-green-600 hover:text-green-900 ml-2">Approve<span class="sr-only"></span></button>
+        </td>
+        <td class="relative whitespace-nowrap border-b border-gray-200 py-4 pr-4 text-right text-sm font-medium sm:pr-8 lg:pr-8">
+            <button hx-post="{% url 'shadchan_contact_requests' %}?request_id={{ contact_request.id }}&action=deny" hx-target="closest tr" hx-swap="outerHTML swap:1s" class="text-red-600 hover:text-red-900 ml-2">Deny<span class="sr-only"></span></button>
+        </td>
+        </tr>
+        {% empty %}
+          <tr>
+            <td class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">NO DATA</td>
+            <td class="whitespace-nowrap border-b border-gray-200 hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">NO DATA</td>
+            <td class="whitespace-nowrap border-b border-gray-200 hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">NO DATA</td>
+            <td class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500"><span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"></span></td>
+            <td class="relative whitespace-nowrap border-b border-gray-200 py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-8 lg:pr-8">
+                {% comment %} <a href="#" class="text-indigo-600 hover:text-indigo-900">Select<span class="sr-only"></span></a> {% endcomment %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+</div>
+{% comment %} This is not a pagination view as of now. {% endcomment %}
+{% comment %} {% include 'match_app/user_pagination.html' with page=unanswered_requests %}  {% endcomment %}
+</section>
+
+</div>
+{% endblock content %}

@@ -1,0 +1,13 @@
+
+{% extends 'emails/base/email_base.html' %}
+
+{% block content %}
+<h1>ShidduchMe - Contact Approved</h1>
+<p>Hello {{ to_user.first_name }}.</p>
+<p>Good News! Shadchan <b>{{ shadchan_user.first_name }} {{ shadchan_user.last_name }}</b> has approved your request for contact.</p>
+<h4>Shadchan Details:</h4>
+<p>Email: {{ shadchan_user.shadchan_profile.public_email }}</p>
+<p>Phone: {{ shadchan_user.shadchan_profile.public_phone_number }}</p></p>
+
+<h4>Thank you for using ShidduchMe.</h4>
+{% endblock content%}

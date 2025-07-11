@@ -1,0 +1,525 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load mathfilters %}
+{% block title %}Make A Suggestion{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/multiSelect.css' %}" />
+<style>
+	[x-cloak] {
+		display: none !important;
+	}
+    .select2 {
+        width: 100% !important;
+    }
+</style>
+ <link rel="stylesheet" href="{% static 'css/select2.css' %}" />
+{% comment %} 
+    GOOD TO:  KNOW X-MODEL IS TWO WAY BINDING AND X-BIND IS ONE WAY BINDING
+{% endcomment %}
+{% if not user.is_authenticated %}
+<div class="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1" style="padding-top: 25px; padding-bottom: 25px;">
+  <div class="absolute left-[max(-7rem,calc(50%-52rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl" aria-hidden="true">
+    {% comment %} <div class="aspect-[577/310] w-[36.0625rem] bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30" style="clip-path: polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)"></div> {% endcomment %}
+  </div>
+  <div class="absolute left-[max(45rem,calc(50%+8rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl" aria-hidden="true">
+    {% comment %} <div class="aspect-[577/310] w-[36.0625rem] bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30" style="clip-path: polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)"></div> {% endcomment %}
+  </div>
+  <p class="text-sm leading-6 text-gray-900">
+    To submit a suggestion <a href="{% url 'account_login' %}" class="whitespace-nowrap font-semibold text-indigo-600">login<span aria-hidden="true"></span></a> or <a href="{% url 'account_signup' %}" class="whitespace-nowrap font-semibold text-indigo-600">sign up<span aria-hidden="true"></span></a>.
+  </p>
+  <div class="flex flex-1 justify-end">
+    {% comment %} <button type="button" class="-m-3 p-3 focus-visible:outline-offset-[-4px]">
+      <span class="sr-only">Dismiss</span>
+      <svg class="h-5 w-5 text-gray-900" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+      </svg>
+    </button> {% endcomment %}
+  </div>
+</div>
+{% endif %}
+
+
+
+<div id="suggestion_page" class="bg-white py-14 sm:py-18">
+    {% now "Y" as current_year %}
+    {% with birth_year=single.profile.date_of_birth|date:"Y" %}
+        {% with age=current_year|sub:birth_year %}
+<form method="POST" 
+  action={{post_to_path}}
+  class='mx-auto max-w-7xl px-6 lg:px-8' 
+  x-data="{
+    fee_amount: {{SUGGESTION_FORM.fee_amount.value}}, 
+    g_sect_field: false, 
+    b_sect_field: false,
+    submitForm() {
+      console.log('submitForm function called');
+      let boys_sect = document.getElementById('id_boys_sect');
+      let girls_sect = document.getElementById('id_girls_sect');
+      if (!boys_sect.value || !girls_sect.value) { 
+        console.log('At least one section is empty');
+        this.g_sect_field = !girls_sect.value; 
+        this.b_sect_field = !boys_sect.value; 
+      } else { 
+        this.$el.submit(); 
+      }
+    }
+  }"
+  @submit.prevent="submitForm"
+>
+  {% csrf_token %}
+  
+    <div class="mx-auto max-w-4xl text-center">
+      <p class="mt-2 text-4xl font-bold tracking-tight text-indigo-600 sm:text-5xl">Make A Suggestion</p>
+    </div>
+    <p class="mx-auto mt-6 mb-10 max-w-2xl text-center text-lg leading-8 text-gray-600">
+        Share your insight - make a difference. your suggestion will be reviewed by our network of trusted shadchanim.
+    </p>
+
+    
+    {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.non_field_errors %} 
+    {% comment %} {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.captcha.errors %}  {% endcomment %}
+    <div class="space-y-10 divide-y divide-gray-900/10">
+        <div class="flex flex-col md:flex-row w-full">
+
+            <section class="bg-white shadow-sm w-full ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 lg:mr-2 sm:mb-5"
+                 x-data="{
+                    b_first_name: '{{ SUGGESTION_FORM.boys_first_name.value|default_if_none:'' }}', 
+                    b_last_name: '{{ SUGGESTION_FORM.boys_last_name.value|default_if_none:'' }}', 
+                    b_mothers_name: '{{ SUGGESTION_FORM.boys_mothers_name.value|default_if_none:'' }}', 
+                    b_fathers_name: '{{ SUGGESTION_FORM.boys_fathers_name.value|default_if_none:'' }}', 
+                    b_country: '{{ SUGGESTION_FORM.boys_country.value|default_if_none:'' }}', 
+                    b_city: '{{ SUGGESTION_FORM.boys_city.value|default_if_none:'' }}', 
+                    b_age: '{{ SUGGESTION_FORM.boys_age.value|default_if_none:'' }}',
+                    for_boy: '{{ SUGGESTION_FORM.for_boy.value|default_if_none:'' }}',
+                    b_modal_open: false,
+                    b_selected: {{b_selected|yesno:'true,false'}},
+                    b_sect: {{ SUGGESTION_FORM.boys_sect.value|default_if_none:'[]'|safe }},
+                    b_reset() {
+                        this.b_first_name = '';
+                        this.b_last_name = '';
+                        this.b_mothers_name = '';
+                        this.b_fathers_name = '';
+                        this.b_country = '';
+                        this.b_city = '';
+                        this.b_age = '';
+                        this.for_boy = '';
+                        this.b_modal_open = false;
+                        this.b_selected = false;
+                        this.b_sect = [];
+                        this.$nextTick(() => {
+                            reinitializeMultiSelectTag('id_boys_sect');
+                        });
+                    }
+                }"
+                x-init="() => {
+                    if ({{ gender }} === 1) {
+                        b_first_name = '{{ single.first_name }}';
+                        b_last_name = '{{ single.last_name }}';
+                        b_mothers_name = '{{ single.profile.mothers_first_name }} {{ single.profile.mothers_last_name }}';
+                        b_fathers_name = '{{ single.profile.fathers_first_name }} {{ single.profile.fathers_last_name }}';
+                        b_country = '{{ single.profile.country }}';
+                        b_city = '{{ single.profile.city }}';
+                        b_age = '{{ age }}';
+                        b_selected = true;
+                        for_boy = '{{ single.id }}';
+                        b_sect = {{ single.profile.sect|safe|default:"[]" }};
+                    }
+                }">
+
+                     
+     
+           
+                <div class="md:flex md:items-center md:justify-between mb-6 mt-3 mx-5">
+                    <div>
+                        <h2 class="text-base font-semibold leading-7 text-gray-900">Boys Information</h2>
+                        <p class="mt-1 text-sm leading-6 text-gray-600">Please enter the boy you have in mind.</p>
+                    </div>
+                    <div class="mt-4 flex md:ml-4 md:mt-0">
+                        <button x-show="b_selected" @click="b_reset" x-cloak type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Clear</button>
+                        {% if user.is_authenticated %}
+                            <button @click="b_modal_open=true" type="button" class="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Search</button>
+                        {% else %}
+                            <div x-data="{showLoginMessage: false}">
+                                <button @click.prevent="showLoginMessage = true" type="button" class="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Search</button>
+                                <p x-show="showLoginMessage" x-cloak class="text-red-500">Login is required to perform a search</p>
+                            </div>
+                        {% endif %}
+                        {% include "match_app/includes/single_suggestion_search_modal.html" with gender='1' %}
+                    </div>
+                </div>
+                <div class="px-4 py-6 sm:p-8">
+                    <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                        <div class="sm:col-span-3">
+                            <label for="{{SUGGESTION_FORM.boys_first_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.boys_first_name.label}}</label>
+                            <div class="mt-2 relative rounded-md shadow-sm">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <svg class="h-5 w-5 text-gray-400"  height="50px" viewBox="0 0 50 50" width="50px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                        <rect fill="none" height="50" width="50"/>
+                                        <path d="M30.933,32.528  c-0.146-1.612-0.09-2.737-0.09-4.21c0.73-0.383,2.038-2.825,2.259-4.888c0.574-0.047,1.479-0.607,1.744-2.818  c0.143-1.187-0.425-1.855-0.771-2.065c0.934-2.809,2.874-11.499-3.588-12.397c-0.665-1.168-2.368-1.759-4.581-1.759  c-8.854,0.163-9.922,6.686-7.981,14.156c-0.345,0.21-0.913,0.878-0.771,2.065c0.266,2.211,1.17,2.771,1.744,2.818  c0.22,2.062,1.58,4.505,2.312,4.888c0,1.473,0.055,2.598-0.091,4.21C19.367,37.238,7.546,35.916,7,45h38  C44.455,35.916,32.685,37.238,30.933,32.528z" fill="none" stroke="#9CA3AF"  stroke-width="3"/>
+                                    </svg>
+                                </div>
+                                {% render_field SUGGESTION_FORM.boys_first_name x-model='b_first_name' x-bind::readonly="b_selected" class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "%}
+                            </div>
+                            {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.boys_first_name.errors %}
+                        </div>
+                        <div class="sm:col-span-3">
+                            <label for="{{SUGGESTION_FORM.boys_last_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.boys_last_name.label}}</label>
+                            <div class="mt-2 relative rounded-md shadow-sm">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <svg class="h-5 w-5 text-gray-400"  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                                    </svg>
+                                </div>
+                                {% render_field SUGGESTION_FORM.boys_last_name x-model='b_last_name' x-bind::readonly="b_selected" class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                            </div>
+                            {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.boys_last_name.errors %}
+                        </div>
+                    <div class="col-span-full flex">
+                        <div class="w-1/2 rounded-l-md">
+                            <label for="{{SUGGESTION_FORM.boys_mothers_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.boys_mothers_name.label}}</label>
+                            <div class="mt-2">
+                                {% render_field SUGGESTION_FORM.boys_mothers_name x-bind::value='b_mothers_name' x-bind::readonly="b_selected" class="block w-full  rounded-l-md border-0 py-1.5 border-l-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2  focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                            </div>
+                            {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.boys_mothers_name.errors %}
+                        </div>
+                        <div class="w-1/2 rounded-r-md">
+                            <label for="{{SUGGESTION_FORM.boys_fathers_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.boys_fathers_name.label}}</label>
+                            <div class="mt-2">
+                                {% render_field SUGGESTION_FORM.boys_fathers_name x-bind::value='b_fathers_name' x-bind::readonly="b_selected" class="block w-full rounded-r-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                            </div>
+                            {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.boys_fathers_name.errors %}
+                        </div>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="{{SUGGESTION_FORM.boys_age.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">Age</label>
+                        <div class="mt-2">
+                            {% render_field SUGGESTION_FORM.boys_age x-bind::value='b_age' x-bind::readonly="b_selected" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" %}
+                        </div>
+                        {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.boys_age.errors %}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country</label>
+                        <div class="mt-2">
+                            {% render_field SUGGESTION_FORM.boys_country x-bind::value='b_country' x-bind::readonly="b_selected" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" %}
+                        </div>
+                        {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.boys_country.errors %}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="{{SUGGESTION_FORM.boys_city.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.boys_city.label}}</label>
+                        <div class="mt-2">
+                        {% render_field SUGGESTION_FORM.boys_city x-bind::value='b_city' x-bind::readonly="b_selected" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                        </div>
+                        {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.boys_city.errors %}
+                    </div>
+                    <div class="sm:col-span-6">
+                        <label for="{{SUGGESTION_FORM.boys_sect.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">Boys Sect</label>
+                        <select name="boys_sect" required id="id_boys_sect" multiple x-model="b_sect" x-init="$nextTick(() => initializeMultiSelectTag('id_boys_sect'))">
+                            {% for value, label in SUGGESTION_FORM.boys_sect.field.choices %}
+                                <option :value="'{{ value }}'" :selected="b_sect.includes('{{ value }}')">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <span x-show="b_sect_field" class="text-red-500 text-sm">Sect is a reqired field</span>
+                        {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.boys_sect.errors %}
+                    </div>
+                    </div>
+                    {% render_field SUGGESTION_FORM.for_boy x-bind::value='for_boy' %}
+                    {% render_field SUGGESTION_FORM.b_selected_state x-bind::value="b_selected"%}
+                </div>
+            </section>
+
+            <section class="bg-white shadow-sm ring-1 w-full ring-gray-900/5 sm:rounded-xl md:col-span-2 lg:ml-2 sm:mb-5" 
+                x-data="{
+                    g_first_name: '{{ SUGGESTION_FORM.girls_first_name.value|default_if_none:"" }}', 
+                    g_last_name: '{{ SUGGESTION_FORM.girls_last_name.value|default_if_none:"" }}', 
+                    g_mothers_name: '{{ SUGGESTION_FORM.girls_mothers_name.value|default_if_none:"" }}', 
+                    g_fathers_name: '{{ SUGGESTION_FORM.girls_fathers_name.value|default_if_none:"" }}', 
+                    g_country: '{{ SUGGESTION_FORM.girls_country.value|default_if_none:"" }}', 
+                    g_city: '{{ SUGGESTION_FORM.girls_city.value|default_if_none:"" }}', 
+                    g_age: '{{ SUGGESTION_FORM.girls_age.value|default_if_none:"" }}',
+                    for_girl: '{{ SUGGESTION_FORM.for_girl.value|default_if_none:""}}',
+                    g_modal_open: false,
+                    g_selected: {{ g_selected|yesno:"true,false" }},
+                    g_sect: {{ SUGGESTION_FORM.girls_sect.value|default_if_none:'[]'|safe }},
+                    g_reset() {
+                        this.g_first_name = null;
+                        this.g_last_name = null;
+                        this.g_mothers_name = null;
+                        this.g_fathers_name = null;
+                        this.g_country = null;
+                        this.g_city = null;
+                        this.g_age = null;
+                        this.for_girl = null;
+                        this.g_modal_open = false;
+                        this.g_selected = false;
+                        this.g_sect = [];
+                    }
+                }"
+                x-init="function() {
+                    if ({{ gender }} === 2) {
+                        this.g_first_name = '{{ single.first_name}}';
+                        this.g_last_name = '{{ single.last_name}}';
+                        this.g_mothers_name = '{{ single.profile.mothers_first_name }} {{ single.profile.mothers_last_name }}';
+                        this.g_fathers_name = '{{ single.profile.fathers_first_name }} {{ single.profile.fathers_last_name }}';
+                        this.g_country = '{{ single.profile.country}}';
+                        this.g_city = '{{ single.profile.city}}';
+                        this.g_age = '{{ age }}'
+                        this.for_girl = '{{ single.id }}';
+                        this.g_selected = true;
+                        this.g_sect = {{ single.profile.sect|safe|default:"[]" }};
+                        this.$nextTick(() => {
+                            reinitializeMultiSelectTag('id_girls_sect');
+                        });
+                    }
+                }">
+                <div class="md:flex md:items-center md:justify-between mb-6 mt-3 mx-5">
+                    <div>
+                        <h2 class="text-base font-semibold leading-7 text-gray-900">Girls Information</h2>
+                        <p class="mt-1 text-sm leading-6 text-gray-600">Please enter the girl you have in mind.</p>
+                    </div>
+                    <div class="mt-4 flex md:ml-4 md:mt-0">
+                        <button x-show="g_selected" @click="g_reset" x-cloak type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Clear</button>
+                        {% if user.is_authenticated %}
+                            <button @click="g_modal_open = !g_modal_open" type="button" class="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Search</button>
+                        {% else %}
+                            <div x-data="{showLoginMessage: false}">
+                                <button @click.prevent="showLoginMessage = true" type="button" class="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Search</button>
+                                <p x-show="showLoginMessage" x-cloak class="text-red-500">Login is required to perform a search</p>
+                            </div>
+                        {% endif %}
+                        {% include "match_app/includes/single_suggestion_search_modal.html" with gender='2' %}
+                    </div>
+                </div>
+            
+                <div class="px-4 py-6 sm:p-8">
+                    <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                        <div class="sm:col-span-3">
+                        <label for="{{SUGGESTION_FORM.girls_first_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.girls_first_name.label}}</label>
+                        <div class="mt-2 relative rounded-md shadow-sm">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-gray-400"  height="50px"  viewBox="0 0 50 50" width="50px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                    <rect fill="none" height="50" width="50"/>
+                                    <path d="M30.933,32.528  c-0.026-0.287-0.045-0.748-0.06-1.226c4.345-0.445,7.393-1.487,7.393-2.701c-0.012-0.002-0.011-0.05-0.011-0.07  c-3.248-2.927,2.816-23.728-8.473-23.306c-0.709-0.6-1.95-1.133-3.73-1.133c-15.291,1.157-8.53,20.8-12.014,24.508  c-0.002,0.001-0.005,0.001-0.007,0.001c0,0.002,0.001,0.004,0.001,0.006c0,0.001-0.001,0.002-0.001,0.002s0.001,0,0.002,0.001  c0.014,1.189,2.959,2.212,7.178,2.668c-0.012,0.29-0.037,0.649-0.092,1.25C19.367,37.238,7.546,35.916,7,45h38  C44.455,35.916,32.685,37.238,30.933,32.528z" fill="none" stroke="#9CA3AF"  stroke-width="3"/>
+                                </svg>
+                            </div>
+                            {% render_field SUGGESTION_FORM.girls_first_name x-bind::value='g_first_name' x-bind::readonly="g_selected" class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                        </div>
+                        {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.girl_first_name.errors %}
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label for="{{SUGGESTION_FORM.girls_last_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.girls_last_name.label}}</label>
+                        <div class="mt-2 relative rounded-md shadow-sm">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <svg class="h-5 w-5 text-gray-400"  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                                </svg>
+                            </div>
+                            {% render_field SUGGESTION_FORM.girls_last_name x-bind::value='g_last_name' x-bind::readonly="g_selected" class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                        </div>
+                        {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.girls_last_name.errors %}
+                    </div>
+                    <div class="col-span-full flex">
+                        <div class="w-1/2 rounded-l-md">
+                            <label for="{{SUGGESTION_FORM.girls_mothers_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.girls_mothers_name.label}}</label>
+                            <div class="mt-2">
+                                {% render_field SUGGESTION_FORM.girls_mothers_name x-bind::value='g_mothers_name' x-bind::readonly="g_selected" class="block w-full  rounded-l-md border-0 py-1.5 border-l-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2  focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                            </div>
+                            {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.girls_mothers_name.errors %}
+                        </div>
+                        <div class="w-1/2 rounded-r-md">
+                            <label for="{{SUGGESTION_FORM.girls_fathers_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.girls_fathers_name.label}}</label>
+                            <div class="mt-2">
+                                {% render_field SUGGESTION_FORM.girls_fathers_name x-bind::value='g_fathers_name' x-bind::readonly="g_selected" class="block w-full rounded-r-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                            </div>
+                            {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.girls_fathers_name.errors %}
+                        </div>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="{{SUGGESTION_FORM.girls_age.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">Age</label>
+                        <div class="mt-2">
+                            {% render_field SUGGESTION_FORM.girls_age x-bind::value='g_age' x-bind::readonly="g_selected" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" %}
+                        </div>
+                        {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.girls_age.errors %}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country</label>
+                        <div class="mt-2">
+                            {% render_field SUGGESTION_FORM.girls_country x-bind::value='g_country' x-bind::readonly="g_selected" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" %}
+                        </div>
+                        {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.girls_country.errors %}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="{{SUGGESTION_FORM.girls_city.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.girls_city.label}}</label>
+                        <div class="mt-2">
+                        {% render_field SUGGESTION_FORM.girls_city x-bind::value='g_city' x-bind::readonly="g_selected" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                        </div>
+                        {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.girls_city.errors %}
+                    </div>
+
+                    <div class="sm:col-span-6">
+                        <label for="{{SUGGESTION_FORM.girls_sect.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">Boys Sect</label>
+                        <select name="girls_sect" required id="id_girls_sect" multiple x-model="g_sect" x-init="$nextTick(() => initializeMultiSelectTag('id_girls_sect'))">
+                            {% for value, label in SUGGESTION_FORM.girls_sect.field.choices %}
+                                <option :value="'{{ value }}'" :selected="g_sect.includes('{{ value }}')">{{ label }}</option>
+                            {% endfor %}
+                        </select> 
+                        <span x-show="g_sect_field" class="text-red-500 text-sm">Sect is a reqired field</span>
+                        {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.girls_sect.errors %}
+                    </div>
+                    
+                </div>
+                {% render_field SUGGESTION_FORM.for_girl x-bind::value='for_girl' %}
+                {% render_field SUGGESTION_FORM.g_selected_state x-bind::value="g_selected" %}
+                </div>
+            </section>
+
+        </div>
+
+        <div class="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
+            <div class="px-4 sm:px-0 ml-3">
+                <h2 class="text-base font-semibold leading-7 text-indigo-600">Sugesters Information</h2>
+                <p class="mt-1 text-sm leading-6 text-gray-600 max-w-lg">
+                    Give the Shadchan a bit more info to work with, such as more information on the people you're suggesting, as well as your contact information for follow-up questions.
+                </p>
+            </div>
+
+            <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+            {% comment %} {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.non_field_errors %} {% endcomment %}
+            <div class="px-4 py-6 sm:p-8">
+                <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div class="col-span-full">
+                    <label for="{{SUGGESTION_FORM.message.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.message.label}}</label>
+                    <div class="mt-2">
+                        {% render_field SUGGESTION_FORM.message rows="3" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"%}
+                    </div>
+                    <p class="mt-3 text-sm leading-6 text-gray-600">{{SUGGESTION_FORM.message.help_text}}.</p>
+                    {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.message.errors %}
+                </div>
+
+
+                <div class="sm:col-span-4">
+                    <label for="{{SUGGESTION_FORM.email.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.email.label}}</label>
+                    <div class="mt-2">
+                    {% render_field SUGGESTION_FORM.email class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                    </div>
+                    {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.email.errors %}
+                </div>
+                <div class="sm:col-span-4">
+                    <label for="{{SUGGESTION_FORM.phone_number.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.phone_number.label}}</label>
+                    <div class="mt-2">
+                    {% render_field SUGGESTION_FORM.phone_number class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                    </div>
+                    {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.phone_number.errors %}
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% render_field SUGGESTION_FORM.fee_amount x-bind::value='fee_amount' %}
+    {% include "match_app/includes/suggestion_payment_form.html" %}
+
+            <div class="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
+                <div class="px-4 sm:px-0 ml-3">
+                    <h2 class="text-base font-semibold leading-7 text-indigo-600">Tag a Shadchan</h2>
+                    <p class="mt-1 text-sm leading-6 text-gray-600 max-w-lg">
+                        You can tag a shadchan to ensure your suggestion is delivered directly to their inbox, thereby enhancing the credibility of your recommendation.
+                    </p>
+                </div>
+
+             
+            <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+                {% comment %} {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.non_field_errors %} {% endcomment %}
+                <div class="px-4 py-6 sm:p-8">
+                    <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                        <div class="col-span-full">
+                            <label for="{{SUGGESTION_FORM.tagged_users.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{SUGGESTION_FORM.tagged_users.label}}</label>
+                            <div class="mt-2">
+                                {% render_field SUGGESTION_FORM.tagged_users class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"%}
+                            </div>
+                            <p class="mt-3 text-sm leading-6 text-gray-600">{{SUGGESTION_FORM.tagged_users.help_text}}</p>
+                            {% include 'includes/form_errors.html' with errors=SUGGESTION_FORM.tagged_users.errors %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    {% comment %} PASS TO THE BACKEND IF THE USER GOT THIS VALUE FROM THE SEARCH MODEL IN THIS CASE IF THERE IS A ERROR IN THE FORM WE WANT TO PERSIST THIS STATE WHEN THERE IS A ERROR IN THE FORM {% endcomment %}
+    <div class="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+   {% if user.is_authenticated %}
+           <button id="submit_suggestion_button" type="submit" @click="submitForm" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Submit Suggestion</button>
+    {% else %}
+<spam></spam>
+    {% endif %}
+        {% comment %} {% if user.is_authenticated %}
+        <button id="submit_suggestion_button" type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Submit Suggestion</button>
+        {% else %}
+        <div x-data="{showLoginMessage: false}">
+        <button id="submit_suggestion_button" type="submit" @click.prevent="showLoginMessage = true" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Submit Suggestion</button>
+        <p x-show="showLoginMessage" x-cloak class="text-red-500">Login is required to submit a suggestion</p>
+        </div>
+        {% endif %} {% endcomment %}
+    </div>
+    </div>
+       {% comment %} {{SUGGESTION_FORM.captcha}} {% endcomment %}
+    </form>
+               {% endwith %}
+                {% endwith %}
+</div>
+</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {{ SUGGESTION_FORM.media.js }}
+    <script src="{% static 'js/multiSelect.js'%}"></script>
+
+
+
+<script>
+function initializeMultiSelectTag(id) {
+    if (!document.getElementById(id).hasAttribute('data-initialized')) {
+        new MultiSelectTag(id, {
+            rounded: true,    // default true
+            shadow: true,      // default false
+            placeholder: 'Search',  // default Search...
+            tagColor: {
+                textColor: '#333333',  // Lighter Black
+                borderColor: '#A9A9A9',  // Lighter Gray
+                bgColor: '#FFFFFF',  // White
+            },
+        });
+        document.getElementById(id).setAttribute('data-initialized', 'true');
+    }
+}
+
+function reinitializeMultiSelectTag(id) {
+    const element = document.getElementById(id);
+    if (element) {
+        // Remove the old MultiSelectTag
+        const oldContainer = element.nextElementSibling;
+        if (oldContainer && oldContainer.classList.contains('mult-select-tag')) {
+            oldContainer.remove();
+        }
+        element.removeAttribute('data-initialized');
+        
+        // Initialize a new MultiSelectTag
+        initializeMultiSelectTag(id);
+    }
+}
+// this will only be ran when the page loades without htmx
+  {% comment %} initializeMultiSelectTag('id_boys_sect');
+  initializeMultiSelectTag('id_girls_sect'); {% endcomment %}
+// this will only be ran when the page loades after htmx
+{% comment %} document.body.addEventListener('htmx:afterOnLoad', function() {
+    initializeMultiSelectTag('id_boys_sect');
+    initializeMultiSelectTag('id_girls_sect');
+});  {% endcomment %}
+</script>
+
+{% comment %} <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> {% endcomment %}
+
+    {% comment %} <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" /> {% endcomment %}
+
+
+{% endblock content %}

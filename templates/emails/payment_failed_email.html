@@ -1,0 +1,22 @@
+{% extends 'emails/base/email_base.html' %}
+
+{% block content %}
+
+<h1>Donation Cancellation Notice</h1>
+{% if donation.from_user %}
+<p>Hi {{ donation.from_user.first_name }},</p>
+{% else %}
+<p>Hi,</p>
+{% endif %}
+<p>We're sorry to inform you that your recent donation payment was unable to be processed.</p>
+{% if update_payment_url %}
+<p>Please <a href="{{ update_payment_url }}">update your payment information</a> to continue helping singles find their bashert.</p>
+{% else %}
+<p>To continue supporting our mission, please visit our <a href="{{ partner_with_us_url }}">Partner With Us</a> page to create a new donation.</p>
+{% endif %}
+<p>If you have any questions or need assistance, please contact our support team.</p>
+<p>Thank you for your support.</p>
+<p>Best regards,</p>
+<p>The ShidduchMe Team</p>
+{% endblock content%}
+

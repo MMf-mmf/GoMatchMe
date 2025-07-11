@@ -1,0 +1,124 @@
+ {% load widget_tweaks %}
+<style>
+  .prose-menubar {
+    margin-bottom: 8px !important;
+  }
+  .prose-editor .ProseMirror {
+    padding: 8px 10px !important;
+  }
+</style>
+<form class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg" 
+      method="post" 
+      enctype="multipart/form-data"
+      action="{% url 'shadchan_edit_detail_page' %}" 
+      x-show="is_edit_profile" 
+      x-cloak 
+      x-init="initFileInput"
+      x-data="{'sect': '', 'language': '', 'language_field': false, 'sect_field': false}" 
+      @submit.prevent="let sectSelect = document.getElementById('sect');
+                          let languageSelect = document.getElementById('language');
+                          if (!sectSelect.value || !languageSelect.value) { 
+                              language_field = !languageSelect.value; 
+                              sect_field = !sectSelect.value; 
+                          } else { 
+                              $el.submit(); 
+                          }">
+                {% csrf_token %}
+                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-indigo-600">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                    </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Edit Profile Info</h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">Pleae keep your profile data acurate and Up-to-date, all of this pages content will be visible to parents and singles.</p>
+                    </div>
+                    </div>
+                </div>
+
+
+                <div id="shadchan_profile_fields">
+                    {% include 'includes/form_errors.html' with errors=UPDATE_SHADCHAN_PROFILE_FORM.non_field_errors %}
+                    <div class="flex mt-4">
+                        <div>
+                         <label for="" class="block text-sm font-medium leading-6 text-gray-900">title</label>
+                        {% render_field UPDATE_SHADCHAN_PROFILE_FORM.title class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                        {% include 'includes/form_errors.html' with errors=UPDATE_SHADCHAN_PROFILE_FORM.title.errors %}
+                        </div>
+                        <div class="mx-1 w-2"></div>
+                        <div>
+                          <label for="" class="block text-sm font-medium leading-6 text-gray-900">country</label>
+                        {% render_field UPDATE_SHADCHAN_PROFILE_FORM.country class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                        {% include 'includes/form_errors.html' with errors=UPDATE_SHADCHAN_PROFILE_FORM.country.errors %}
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                           <label for="" class="block text-sm font-medium leading-6 text-gray-900">Languages</label>
+                        {% render_field UPDATE_SHADCHAN_PROFILE_FORM.language%}
+                        <span x-show="language_field" class="text-red-500 text-sm">Language is a reqired field</span>
+                    </div>
+                    <div class="mt-3">
+                        <label for="" class="block text-sm font-medium leading-6 text-gray-900">Sect</label>
+                        {% render_field UPDATE_SHADCHAN_PROFILE_FORM.sect%}
+                        <span x-show="sect_field" class="text-red-500 text-sm">Sect is a reqired field</span>
+                    </div>
+                    <div class="mt-3">
+                    <label for="" class="block text-sm font-medium leading-6 text-gray-900">Highlights</label>
+                    {% render_field UPDATE_SHADCHAN_PROFILE_FORM.highlights class=" block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                   
+                    <p class="text-gray-500 text-xs">{{UPDATE_SHADCHAN_PROFILE_FORM.highlights.help_text}}</p>
+                    {% include 'includes/form_errors.html' with errors=UPDATE_SHADCHAN_PROFILE_FORM.highlights.errors %}
+                    </div>  
+                    <div class="mt-3">
+                       <label for="" class="block text-sm font-medium leading-6 text-gray-900">Bio</label>
+                    {% render_field UPDATE_SHADCHAN_PROFILE_FORM.bio class=" block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"%}
+                      {% include 'includes/form_errors.html' with errors=UPDATE_SHADCHAN_PROFILE_FORM.bio.errors %}
+                    </div>
+                    <div class="flex w-full">
+                        <div class="mt-3 w-full">
+                            <label for="" class="block text-sm font-medium leading-6 text-gray-900">Display Phone Number</label>
+                            {% render_field UPDATE_SHADCHAN_PROFILE_FORM.public_phone_number class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                            {% include 'includes/form_errors.html' with errors=UPDATE_SHADCHAN_PROFILE_FORM.public_phone_number.errors %}
+                        </div>
+                        
+                         <div class="mx-1 w-2"></div>
+                        <div class="mt-3 w-full">
+                            <label for="" class="block text-sm font-medium leading-6 text-gray-900">Display Email</label>
+                            {% render_field UPDATE_SHADCHAN_PROFILE_FORM.public_email class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+                            {% include 'includes/form_errors.html' with errors=UPDATE_SHADCHAN_PROFILE_FORM.public_email.errors %}
+                        </div>
+                    </div> 
+                    {% comment %} image upload field {% endcomment %}
+                    <div class="w-full">
+                      <div class="col-span-full">
+                        <label for="{{UPDATE_SHADCHAN_PROFILE_FORM.profile_image.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900 mt-3">Photo</label>
+                        <div class="mt-2 flex items-center gap-x-3">
+                        
+                        <svg id="profile-avatar" class="h-12 w-12 text-gray-300 hidden" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd" />
+                        </svg>
+                 
+                      
+                        {% if shadchan.shadchan_profile.profile_image %}
+                          <img src="{{ shadchan.shadchan_profile.profile_image.url }}" id="image-view" alt="" class="object-cover inline-block h-12 w-12 rounded-sm">
+                        {% else %}
+                            <img id="image-view" src="\static\images\boysAvatar.jpg" alt="user Avatar" class="object-cover inline-block h-12 w-12 rounded-sm" >
+                        {% endif %}
+                        <label for="{{UPDATE_SHADCHAN_PROFILE_FORM.profile_image.id_for_label}}" class="form-input-button rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 cursor-pointer">Choose Image</label>
+                        <input id="{{UPDATE_SHADCHAN_PROFILE_FORM.profile_image.id_for_label}}" name="{{UPDATE_SHADCHAN_PROFILE_FORM.profile_image.name}}" type="file" accept=".jpg, .jpeg, .png" class="form-input hidden opacity-0">
+                        {% include 'includes/form_errors.html' with errors=UPDATE_SHADCHAN_PROFILE_FORM.profile_image.errors %}
+                        </div>
+                    </div>
+                    </div>
+
+                </div>
+
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button type="submit" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Update</button>
+                <button @click="is_edit_modal_open=false, is_edit_terms=false, is_edit_modal_open=false, is_edit_selection=false, is_edit_faq=false, is_edit_profile=false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+                </div>
+            </form>

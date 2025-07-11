@@ -1,0 +1,26 @@
+{% extends 'emails/base/email_base.html' %}
+
+{% block content %}
+
+<h1>Bounty Assurance Charge Notification</h1>
+<p>Dear {{ bounty_order.from_user.get_full_name }},</p>
+<p>We hope this message finds you well.</p>
+<p>We are writing to inform you that a <strong>Bounty Assurance Charge</strong> of <strong>$5.00</strong> has been applied to your card on file. This charge is associated with your existing bounty for <strong>{{ bounty_order.to_user.get_full_name }}</strong> and is processed every six months to keep the bounty active, and will go towards the bounty of ${{ bounty_order.amount }} when the match occurs.</p>
+<h3>Bounty Details:</h3>
+<ul>
+    <li><strong>(Original) Bounty Amount:</strong> ${{ bounty_order.amount }}</li>
+    <li><strong>Recipient:</strong> {{ bounty_order.to_user.get_full_name }}</li>
+    <li><strong>Bounty Assurance Charge:</strong> $5.00 (every six months)</li>
+</ul>
+<p>By keeping your bounty active, you continue to support {{ bounty_order.to_user.first_name }} in finding the right match. Your contribution ensures that matchmakers remain incentivized to assist in this important process.</p>
+<h3>Upcoming Charges:</h3>
+<ul>
+    <li>Your next Bounty Assurance Charge of $5.00 will occur in six months to maintain the bounty's active status.</li>
+    <li>If {{ bounty_order.to_user.get_full_name }} becomes engaged and the matchmaker responsible claims the bounty, you will be charged the bounty amount of ${{ bounty_order.amount }} (minus all $5 bounty assurance charges) shortly after the couple's engagement.</li>
+</ul>
+<p>If you have any questions or wish to modify your bounty, please contact our support team.</p>
+<p>Thank you for your continued support and for being an integral part of our community.</p>
+<p>Best regards,</p>
+<p>The ShidduchMe Team</p>
+
+{% endblock content%}

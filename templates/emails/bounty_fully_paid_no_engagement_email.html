@@ -1,0 +1,15 @@
+{% extends 'emails/base/email_base.html' %}
+
+{% block content %}
+
+<h1>Bounty Fully Paid</h1>
+<p>Hi, {{ from_user.get_full_name }}</p>
+<p>We are pleased to inform you that your bounty for {{ to_user.get_full_name }} has been fully paid. This bounty was created {{ bounty_order.created_at|date:"Y" }} years ago.</p>
+<p>The bounty amount of ${{ bounty_order.amount }} has been added to {{ to_user.get_full_name }}'s account.</p>
+<p>There is nothing further for you to do at this time. If you have any questions or need further assistance, please contact our support team.</p>
+<p>Thank you for your continued support for our community's singles.</p>
+<p>Best regards,</p>
+<p>The ShidduchMe Team</p>
+
+{% endblock content%}
+

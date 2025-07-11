@@ -1,0 +1,419 @@
+{% extends 'base/base.html' %}
+{% load tz %}
+{% block title %}Suggestions List{% endblock title %}
+
+{% block content %}
+
+
+<style>
+  .table-container {
+    max-height: 1300px;
+    @media screen and (min-width: 1024px) {
+        max-height: 700px;
+    }
+    max-width: 100%;
+    overflow: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+  }
+  
+  .table-container table {
+    width: max-content;
+    min-width: 100%;
+  }
+  
+  .table-container thead {
+    position: sticky;
+    top: 0;
+    background-color: #f9fafb;
+    z-index: 1;
+  }
+
+  .table-container th,
+  .table-container td {
+    white-space: nowrap;
+  }
+
+    .highlight {
+        background-color: lightyellow;
+    }
+
+</style>
+<section class="lg:mx-24 sm:mx-10 my-9" x-data="{
+  'report_open': false, 
+  'details_open': false, 
+  'suggestion_id': '',
+  'suggestion_by_first_name': '',
+  'suggestion_by_last_name': '',
+  'message': '',
+  'email': '',
+  'phone_number': '',
+  'boys_first_name': '',
+  'boys_last_name': '',
+  'boys_mothers_name':'',
+  'boys_fathers_name': '',
+  'boys_age': '',
+  'boys_country': '',
+  'boys_city': '',
+  'girls_first_name': '',
+  'girls_last_name': '',
+  'girls_mothers_name': '',
+  'girls_fathers_name': '',
+  'girls_age': '',
+  'girls_country': '',
+  'girls_city': '',
+  'amount': '',
+  'ranking': '',
+  'is_active': false
+}">
+ {% include "match_app/includes/suggestions_page_header.html" %}
+ {% include "match_app/includes/suggestion_detail_modal.html" %}
+
+ {% include "match_app/includes/report_suggestion_modal.html" %}
+
+
+
+{% comment %} START FILTER {% endcomment %}
+
+
+<div class="bg-white my-10" x-data="{ filtersOpen: false, sortOpen: false }">
+  <!-- Filters -->
+  <section aria-labelledby="filter-heading" class="grid items-center border-b border-t border-gray-200">
+    <h2 id="filter-heading" class="sr-only">Filters</h2>
+        {% comment %}
+    <div class="relative col-start-1 row-start-1 py-4">
+      <div class="mx-auto flex max-w-7xl space-x-6 divide-x divide-gray-200 px-4 text-sm sm:px-6 lg:px-8">
+        <div>
+          <button type="button" class="group flex items-center font-medium text-gray-700" @click="filtersOpen = !filtersOpen" aria-controls="disclosure-1" :aria-expanded="filtersOpen">
+            <svg class="mr-2 h-5 w-5 flex-none text-gray-400 group-hover:text-gray-500" aria-hidden="true" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 01.628.74v2.288a2.25 2.25 0 01-.659 1.59l-4.682 4.683a2.25 2.25 0 00-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 018 18.25v-5.757a2.25 2.25 0 00-.659-1.591L2.659 6.22A2.25 2.25 0 012 4.629V2.34a.75.75 0 01.628-.74z" clip-rule="evenodd" />
+            </svg>
+            2 Filters
+          </button>
+        </div>
+        <div class="pl-6">
+          <button type="button" class="text-gray-500">Clear all</button>
+        </div>
+      </div>
+    </div>
+       <div class="border-t border-gray-200 py-10" id="disclosure-1" x-show="filtersOpen" x-cloak>
+      <div class="mx-auto grid max-w-7xl grid-cols-2 gap-x-4 px-4 text-sm sm:px-6 md:gap-x-6 lg:px-8">
+        <!-- Filter options here  -->
+        
+                <div class="grid auto-rows-min grid-cols-1 gap-y-10 md:grid-cols-2 md:gap-x-6">
+          <fieldset>
+            <legend class="block font-medium">Price</legend>
+            <div class="space-y-6 pt-6 sm:space-y-4 sm:pt-4">
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="price-0" name="price[]" value="0" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="price-0" class="ml-3 min-w-0 flex-1 text-gray-600">$0 - $25</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="price-1" name="price[]" value="25" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="price-1" class="ml-3 min-w-0 flex-1 text-gray-600">$25 - $50</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="price-2" name="price[]" value="50" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="price-2" class="ml-3 min-w-0 flex-1 text-gray-600">$50 - $75</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="price-3" name="price[]" value="75" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="price-3" class="ml-3 min-w-0 flex-1 text-gray-600">$75+</label>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend class="block font-medium">Color</legend>
+            <div class="space-y-6 pt-6 sm:space-y-4 sm:pt-4">
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="color-0" name="color[]" value="white" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="color-0" class="ml-3 min-w-0 flex-1 text-gray-600">White</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="color-1" name="color[]" value="beige" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="color-1" class="ml-3 min-w-0 flex-1 text-gray-600">Beige</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="color-2" name="color[]" value="blue" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" checked>
+                <label for="color-2" class="ml-3 min-w-0 flex-1 text-gray-600">Blue</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="color-3" name="color[]" value="brown" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="color-3" class="ml-3 min-w-0 flex-1 text-gray-600">Brown</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="color-4" name="color[]" value="green" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="color-4" class="ml-3 min-w-0 flex-1 text-gray-600">Green</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="color-5" name="color[]" value="purple" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="color-5" class="ml-3 min-w-0 flex-1 text-gray-600">Purple</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+        <div class="grid auto-rows-min grid-cols-1 gap-y-10 md:grid-cols-2 md:gap-x-6">
+          <fieldset>
+            <legend class="block font-medium">Size</legend>
+            <div class="space-y-6 pt-6 sm:space-y-4 sm:pt-4">
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="size-0" name="size[]" value="xs" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="size-0" class="ml-3 min-w-0 flex-1 text-gray-600">XS</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="size-1" name="size[]" value="s" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" checked>
+                <label for="size-1" class="ml-3 min-w-0 flex-1 text-gray-600">S</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="size-2" name="size[]" value="m" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="size-2" class="ml-3 min-w-0 flex-1 text-gray-600">M</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="size-3" name="size[]" value="l" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="size-3" class="ml-3 min-w-0 flex-1 text-gray-600">L</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="size-4" name="size[]" value="xl" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="size-4" class="ml-3 min-w-0 flex-1 text-gray-600">XL</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="size-5" name="size[]" value="2xl" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="size-5" class="ml-3 min-w-0 flex-1 text-gray-600">2XL</label>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend class="block font-medium">Category</legend>
+            <div class="space-y-6 pt-6 sm:space-y-4 sm:pt-4">
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="category-0" name="category[]" value="all-new-arrivals" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="category-0" class="ml-3 min-w-0 flex-1 text-gray-600">All New Arrivals</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="category-1" name="category[]" value="tees" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="category-1" class="ml-3 min-w-0 flex-1 text-gray-600">Tees</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="category-2" name="category[]" value="objects" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="category-2" class="ml-3 min-w-0 flex-1 text-gray-600">Objects</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="category-3" name="category[]" value="sweatshirts" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="category-3" class="ml-3 min-w-0 flex-1 text-gray-600">Sweatshirts</label>
+              </div>
+              <div class="flex items-center text-base sm:text-sm">
+                <input id="category-4" name="category[]" value="pants-and-shorts" type="checkbox" class="h-4 w-4 flex-shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                <label for="category-4" class="ml-3 min-w-0 flex-1 text-gray-600">Pants &amp; Shorts</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+        
+        <!-- Filter options here -->
+
+
+      </div>
+    </div> {% endcomment %}
+    <div class="col-start-1 row-start-1 py-4">
+      <div class="mx-auto flex max-w-7xl justify-end px-4 sm:px-6 lg:px-8">
+        <div class="relative inline-block" x-data="{ open: false }">
+          <div class="flex">
+            <button type="button" class="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900" id="menu-button" @click="open = !open" aria-expanded="false" aria-haspopup="true">
+              Sort
+              <svg class="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="absolute right-0 z-20 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none" 
+               role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"
+               x-show="open"
+               x-transition:enter="transition ease-out duration-100"
+               x-transition:enter-start="transform opacity-0 scale-95"
+               x-transition:enter-end="transform opacity-100 scale-100"
+               x-transition:leave="transition ease-in duration-75"
+               x-transition:leave-start="transform opacity-100 scale-100"
+               x-transition:leave-end="transform opacity-0 scale-95"
+               @click.away="open = false"
+               x-cloak>
+            <div class="py-1" role="none" x-data="{
+                  selected: 'all',
+                  init() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const filter = urlParams.get('filter');
+                    if (filter) {
+                      this.selected = filter;
+                    }
+                  }
+                }">
+            <a href="?filter=all" class="block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-3" :class="{'text-gray-900 font-medium': selected === 'all', 'text-gray-500': selected !== 'all'}">All</a>
+            <a href="?filter=tagged" class="block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-4" :class="{'text-gray-900 font-medium': selected === 'tagged', 'text-gray-500': selected !== 'tagged'}" title="only if i'm tagged on the suggestion">Tagged</a>
+           {% comment %} <a href="?filter=newest" class="block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-5" :class="{'text-gray-900 font-medium': selected === 'newest', 'text-gray-500': selected !== 'newest'}" >Newest</a> {% endcomment %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% comment %} END FILTER {% endcomment %}
+
+
+
+
+{% if suggestions %}
+
+
+<div class="px-4 sm:px-6 lg:px-8" x-data="{ init() { 
+        const urlParams = new URLSearchParams(window.location.search);
+        const suggestionId = urlParams.get('suggestion');
+        if (suggestionId) {
+            const suggestionElement = document.getElementById(suggestionId);
+            if (suggestionElement) {
+                suggestionElement.classList.add('highlight');
+                suggestionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    } }" x-init="init()">
+  <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full pb-2 align-middle table-container">
+        <table class="min-w-full border-separate border-spacing-0">
+          <thead>
+            <tr>
+                <th scope="col" class="sticky z-0 top-0 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Boys Name <br> Girls Name</th>
+                <th scope="col" class="sticky z-0 top-0 border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Boys Age <br> Girls Age</th>
+                <th scope="col" class="sticky z-0 top-0 border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Boys Parents <br> Girls Parents</th>
+                {% comment %} <th scope="col" class="sticky z-0 top-0 border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter" title="shadchanim working on this suggestion">Shadchan #</th> {% endcomment %}
+                <th scope="col" class="sticky z-0 top-0 border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Time</th>
+                {% comment %} <th scope="col" class="sticky z-0 top-0 border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter" title="">Suggestion Score</th> {% endcomment %}
+                <th scope="col" class="sticky z-10 top-0 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pr-4 backdrop-blur backdrop-filter sm:pr-6 lg:pr-8"><span class="sr-only">View Full</span></th>
+            </tr>
+          </thead>
+          <tbody id="shadchan_search_results">
+            {% regroup suggestions by created|date:"Y-m-d" as grouped_suggestions %}
+            {% for group in grouped_suggestions %}
+              <tr>
+                <td colspan="6" class="bg-gray-50 px-3 py-2 mt-2 text-sm text-gray-700">
+                  {{ group.list.0.created|date:"F d, Y" }}
+                </td>
+              </tr>
+              {% for suggestion in group.list %}
+                <tr id="{{suggestion.id}}" class="{% if request.user not in suggestion.views.all and request.user in suggestion.tagged_users %}highlight{% endif %}">
+                  <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500 border-b border-gray-200">
+                    <div class="text-gray-900">
+                      {% if suggestion.for_boy %}
+                        <a class="text-blue-800 hover:text-blue-900" href="{% url 'user_detail' suggestion.for_boy.id %}">
+                          {{suggestion.boys_first_name}} {{suggestion.boys_last_name}}
+                        </a>
+                      {% else %}
+                        <span title="Single not Registerd on ShidduchMe">{{suggestion.boys_first_name}} {{suggestion.boys_last_name}}</span>
+                      {% endif %}
+                    </div>
+                    <div class="mt-1 text-gray-500">
+                      {% if suggestion.for_girl %}
+                        <a class="text-blue-500 hover:text-blue-900" href="{% url 'user_detail' suggestion.for_girl.id %}">
+                          {{suggestion.girls_first_name}} {{suggestion.girls_last_name}}
+                        </a>
+                      {% else %}
+                        {{suggestion.girls_first_name}} {{suggestion.girls_last_name}}
+                      {% endif %}
+                    </div>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500 border-b border-gray-200">
+                    <div class="text-gray-900">{{suggestion.boys_age}} </div>
+                    <div class="mt-1 text-gray-500">{{suggestion.girls_age}}</div>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500 border-b border-gray-200">
+                    <div class="text-gray-900">{{suggestion.boys_mothers_name}} And {{suggestion.boys_fathers_name}}</div>
+                    <div class="mt-1 text-gray-500">{{suggestion.girls_mothers_name}} And {{suggestion.girls_fathers_name}}</div>
+                  </td>
+                  {% comment %} <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500 border-b border-gray-200">
+                    <div class="text-gray-900">0</div>
+                    <div class="mt-1 text-gray-500"></div>
+                  </td> {% endcomment %}
+                  <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500 border-b border-gray-200">
+                    <div class="text-gray-900">{{suggestion.created|timesince}}</div>
+                    <div class="mt-1 text-gray-500"></div>
+                  </td>
+                  {% comment %} <td class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500">
+                    <div class="flex items-center">
+                      {% for i in stars %}
+                        <svg class="h-5 w-5 flex-shrink-0 {% if suggestion.ranking >= i %} text-yellow-400 {% else %} text-gray-300 {% endif %}" 
+                            viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
+                        </svg>
+                      {% endfor %}
+                    </div>
+                  </td> {% endcomment %}
+                  <td class="relative whitespace-nowrap border-b border-gray-200 p-[40px] flex text-right text-sm font-medium sm:pr-8 lg:pr-8 mr-1">
+                    <svg class="text-green-700 hover:text-green-900 w-5 h-5 cursor-pointer mr-1" title="View Full Suggestion Details" 
+                           hx-post="{% url 'add_view_to_suggestion' suggestion.id %}"
+                           @click="
+                          details_open=true, 
+                          boys_first_name = '{{ suggestion.boys_first_name|default:"None"|escapejs }}', 
+                          boys_last_name = '{{ suggestion.boys_last_name|default:"None"|escapejs }}', 
+                          boys_mothers_name = '{{ suggestion.boys_mothers_name|default:"None"|escapejs }}', 
+                          boys_fathers_name = '{{ suggestion.boys_fathers_name|default:"None"|escapejs }}',
+                          boys_age = '{{ suggestion.boys_age|default:"None"|escapejs }}', 
+                          boys_country = '{{ suggestion.boys_country|default:"None"|escapejs }}', 
+                          boys_city = '{{ suggestion.boys_city|default:"None"|escapejs }}', 
+                          girls_first_name = '{{ suggestion.girls_first_name|default:"None"|escapejs }}', 
+                          girls_last_name = '{{ suggestion.girls_last_name|default:"None"|escapejs }}', 
+                          girls_mothers_name = '{{ suggestion.girls_mothers_name|default:"None"|escapejs }}', 
+                          girls_fathers_name = '{{ suggestion.girls_fathers_name|default:"None"|escapejs }}', 
+                          girls_age = '{{ suggestion.girls_age|default:"None"|escapejs }}', 
+                          girls_country = '{{ suggestion.girls_country|default:"None"|escapejs }}', 
+                          girls_city = '{{ suggestion.girls_city|default:"None"|escapejs }}', 
+                          amount = '{{ suggestion.amount|default:"0"|escapejs }}', 
+                          ranking = '{{ suggestion.get_ranking_display|default:"None"|escapejs }}',
+                          suggestion_by_first_name = '{{ suggestion.made_by.first_name|escapejs }}',
+                          suggestion_by_last_name = '{{ suggestion.made_by.last_name|escapejs }}',
+                          message = '{{ suggestion.message|default:"None"|escapejs }}',
+                          email = '{{ suggestion.email|default:"None"|escapejs }}',
+                          phone_number = '{{ suggestion.phone_number|default:"None"|escapejs }}',
+                          document.getElementById('{{ suggestion.id }}').classList.remove('highlight')
+                      "
+                      fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                    <span class="border-r border-gray-300"></span>
+                    <svg class="text-red-700 hover:text-red-900 w-5 h-5 ml-1 cursor-pointer" title="Flag this Suggestion, should this suggestion be on the list?" @click="report_open=true; suggestion_id='{{suggestion.id}}' " fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                    </svg>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% empty %}
+              <tr>
+                <td colspan="6" class="text-center py-4 text-gray-500">No suggestions found.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="rounded-md bg-blue-50 p-4 mt-5">
+  <div class="flex">
+    <div class="flex-shrink-0">
+      <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+      </svg>
+    </div>
+    <div class="ml-3 flex-1 md:flex md:justify-between">
+      <p class="text-sm text-blue-700">There are no suggestions at this time. Please come back later</p>
+    </div>
+  </div>    
+</div>
+{% endif %}
+
+
+</section>
+{% include 'match_app/user_pagination.html' with page=suggestions %} 
+{% endblock content %}

@@ -1,0 +1,15 @@
+{% comment %} if chat_request_sent sent is true {% endcomment %}
+
+{% if chat_request_sent %}
+    <span class="flex items-center bg-blue-600 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100">
+        <a>
+            Pending Chat Request
+        </a>
+    </span>
+{% else %}
+    <span id="request_to_chat" class='bg-red-500'>
+        <a>
+            Error Sending Chat Request
+        </a>
+    </span>
+{% endif %}

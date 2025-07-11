@@ -1,0 +1,19 @@
+{% extends 'emails/base/email_base.html' %}
+
+{% comment %} {% block title %}Control Center{% endblock title %} {% endcomment %}
+
+{% block content %}
+<h1>New Suggestion!</h1>
+<p>Dear {{ to_user.first_name }},</p>
+<p>We are pleased to inform you that you have been tagged in a new suggestion for a potential match.</p>
+<p>Please review this match suggestion with carfull considoration<p>
+<p><b>{{ suggestion.girls_first_name }} {{ suggestion.girls_last_name }}</b> has been suggested to match with <b>{{ suggestion.boys_first_name }} {{ suggestion.boys_last_name }}</b>.</p>
+<b>Message from the suggester:</b>
+<p>{{ suggestion.message }}</p>
+<p>To view your suggestion, click <a href="{{suggestion_list_url}}">here</a>.</p>
+<br>
+<p>Best regards,</p>
+<p>The ShidduchMe Team</p>
+  
+
+{% endblock content %}

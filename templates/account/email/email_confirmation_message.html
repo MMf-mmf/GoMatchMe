@@ -1,0 +1,42 @@
+{% extends "account/email/email_base.html" %}
+{% load account %}
+{% load i18n %}
+
+{% block content %}
+{% autoescape off %}
+{% user_display user as user_display %}
+{% with site_name=current_site.name site_domain=current_site.domain %}
+<table style="width: 100%; border-collapse: collapse;">
+  <tr>
+	<td style="background-color: #f0f0f0; padding: 20px;">
+	  <table style="max-width: 600px; margin: auto; background-color: white; border-collapse: collapse;">
+		<tr>
+		  <td style="padding: 20px; text-align: center; background-color: #00449e; color: white;">
+			<h1 style="margin: 0; font-size: 24px;">{{ site_name }}</h1>
+		  </td>
+		</tr>
+		<tr>
+		  <td style="padding: 20px;">
+			<p style="font-size: 16px; color: #333;">
+			  {% trans "You're receiving this email because user" %} <strong>{{ user_display }}</strong> {% trans "has given your email address to register an account on" %} <strong>{{ site_domain }}</strong>.
+			</p>
+			<p style="font-size: 16px; color: #333;">
+			  {% trans "To confirm this is correct, go to" %}
+			  <a href="{{ activate_url }}" style="color: #00449e; text-decoration: none;">{{ activate_url }}</a>
+			</p>
+		  </td>
+		</tr>
+		<tr>
+		  <td style="background-color: #f0f0f0; padding: 20px; text-align: center;">
+			<p style="margin: 0; font-size: 14px; color: #666;">
+			  {% trans "If you didn't request this, please ignore this email." %}
+			</p>
+		  </td>
+		</tr>
+	  </table>
+	</td>
+  </tr>
+</table>
+{% endwith %}
+{% endautoescape %}
+{% endblock content %}

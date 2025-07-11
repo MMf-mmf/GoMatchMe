@@ -1,0 +1,72 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Change Email{% endblock title %}
+{% block content %}
+
+<div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm min-h-full">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+          <img class="mx-auto h-24 w-auto" src="{% static 'images/ShidduchMeLogo.png' %}" alt="ShidduchMe">
+        <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-indigo-600">Change Email</h2>
+    </div>
+    {% if not emailaddresses %}
+        {% include "account/snippets/warn_no_email.html" %}
+    {% endif %}
+    {% url 'account_email' as action_url %}
+    <form id="email_change" method="post" action="{{ action_url }}" class="space-y-6">
+        {% csrf_token %}
+        {% if current_emailaddress %}
+            <div>
+                <label for="current_email" class="block text-sm font-medium leading-6 text-gray-900">Current email:</label>
+                <div class="mt-2">
+                    <input id="current_email" name="current_email" type="email" value="{{ current_emailaddress.email }}" disabled class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                </div>
+            </div>
+        {% endif %}
+        {% if new_emailaddress %}
+            <div>
+                <label for="new_email" class="block text-sm font-medium leading-6 text-gray-900">
+                    {% if not current_emailaddress %}
+                        Current email:
+                    {% else %}
+                        Changing to:
+                    {% endif %}
+                </label>
+                <div class="mt-2">
+                    <input id="new_email" name="new_email" type="email" value="{{ new_emailaddress.email }}" disabled class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                </div>
+                <p class="mt-2 text-sm text-gray-600">Your email address is still pending verification.</p>
+                <div class="mt-2 flex space-x-2">
+                    <button form="pending-email" type="submit" name="action_send" class="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        Re-send Verification
+                    </button>
+                    {% if current_emailaddress %}
+                        <button form="pending-email" type="submit" name="action_remove" class="rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                            Cancel Change
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+        <div>
+            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">Change to:</label>
+            <div class="mt-2">
+                <input id="{{ form.email.id_for_label }}" name="email" type="email" value="{{ form.email.value|default:" " }}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            </div>
+            {% include 'includes/form_errors.html' with errors=form.email.errors %}
+        </div>
+        <div>
+            <button type="submit" name="action_add" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                Change Email
+            </button>
+        </div>
+    </form>
+    {% if new_emailaddress %}
+        <form style="display: none" id="pending-email" method="post" action="{% url 'account_email' %}">
+            {% csrf_token %}
+            <input type="hidden" name="email" value="{{ new_emailaddress.email }}">
+        </form>
+    {% endif %}
+</div>
+
+{% endblock content %}

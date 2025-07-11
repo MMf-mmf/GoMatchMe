@@ -1,0 +1,123 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% comment %} {% load widget_tweaks %}
+{% load notifications_tags %} {% endcomment %}
+
+{% block title %}Privacy Policy{% endblock title %}
+
+{% block content %}
+
+<div class="relative isolate overflow-hidden bg-white px-6 py-24 sm:py-32 lg:overflow-visible lg:px-0">
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <svg class="absolute left-[max(50%,25rem)] top-0 h-[64rem] w-[128rem] -translate-x-1/2 stroke-gray-200 [mask-image:radial-gradient(64rem_64rem_at_top,white,transparent)]" aria-hidden="true">
+      <defs>
+        <pattern id="e813992c-7d03-4cc4-a2bd-151760b470a0" width="200" height="200" x="50%" y="-1" patternUnits="userSpaceOnUse">
+          <path d="M100 200V.5M.5 .5H200" fill="none" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" stroke-width="0" fill="url(#e813992c-7d03-4cc4-a2bd-151760b470a0)" />
+    </svg>
+  </div>
+  <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-1 lg:items-start lg:gap-y-10">
+    <div class="lg:col-span-1 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:gap-x-8 lg:px-8">
+      <div class="lg:pr-4">
+        <div class="lg:max-w-lg">
+          <h1 class="mt-2 text-pretty text-4xl font-semibold tracking-tight text-indigo-600 sm:text-5xl">Privacy Policy</h1>
+          <p class="mt-6 text-xl/8 text-gray-700">Last Updated: October 29, 2024</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="lg:col-span-1 lg:col-start-1 lg:row-start-2 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:gap-x-8 lg:px-8">
+      <div class="lg:pr-4">
+        <div class="max-w-xl text-base/7 text-gray-700 lg:max-w-lg">
+          <div class="space-y-8">
+            <section>
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-4">1. Introduction</h2>
+              <p>ShidduchMe ("we," "our," or "us") is committed to protecting the privacy and confidentiality of all users of our matchmaking platform. This Privacy Policy explains how we collect, use, and safeguard your personal information in accordance with both secular and halachic principles.</p>
+            </section>
+
+            <section>
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-4">2. Information We Collect</h2>
+              <ul class="list-disc pl-6 space-y-2">
+                <li>Personal identification information (name, age, contact details)</li>
+                <li>Religious background and observance level</li>
+                <li>Educational and professional information</li>
+                <li>Family background information</li>
+                <li>References and recommendations</li>
+                <li>Profile preferences and matching criteria</li>
+                <li>Communication records between users and shadchanim</li>
+                <li>Bounty-related transaction information</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-4">3. How We Use Your Information</h2>
+              <ul class="list-disc pl-6 space-y-2">
+                <li>To create and maintain your matchmaking profile</li>
+                <li>To facilitate appropriate matches and suggestions</li>
+                <li>To process and manage bounty transactions</li>
+                <li>To enable communication between users and shadchanim</li>
+                <li>To improve our platform's functionality and user experience</li>
+                <li>To ensure compliance with our community standards</li>
+                <li>To send important updates about our service</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-4">4. Information Sharing and Disclosure</h2>
+              <p>We maintain strict confidentiality standards and share information only:</p>
+              <ul class="list-disc pl-6 space-y-2 mt-2">
+                <li>With verified shadchanim who have agreed to our privacy terms</li>
+                <li>With potential matches, only after appropriate authorization</li>
+                <li>With references provided by the user</li>
+                <li>As required by law or to protect rights and safety</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-4">5. Data Security</h2>
+              <p>We implement robust security measures to protect your personal information, including:</p>
+              <ul class="list-disc pl-6 space-y-2 mt-2">
+                <li>Encrypted data storage and transmission</li>
+                <li>Regular security audits and updates</li>
+                <li>Strict access controls for administrative users</li>
+                <li>Secure backup systems</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-4">6. User Rights and Controls</h2>
+              <p>You have the right to:</p>
+              <ul class="list-disc pl-6 space-y-2 mt-2">
+                <li>Access and review your personal information</li>
+                <li>Update or correct your profile information</li>
+                <li>Request deletion of your account and data</li>
+                <li>Opt-out of non-essential communications</li>
+                <li>Control visibility settings of your profile</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-4">7. Data Retention</h2>
+              <p>We retain your information for as long as your account is active or as needed to provide services. Upon account deletion, we will securely remove your personal information, except where required by law to retain certain records.</p>
+            </section>
+
+            <section>
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-4">8. Contact Information</h2>
+              <p>For privacy-related questions or concerns, please contact us at support@ShidduchMe.com.</p>
+            </section>
+
+            <section>
+              <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-4">9. Updates to Privacy Policy</h2>
+              <p>We may update this Privacy Policy periodically. Users will be notified of significant changes via email or platform notification. Continued use of ShidduchMe after such changes constitutes acceptance of the updated policy.</p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock content%}

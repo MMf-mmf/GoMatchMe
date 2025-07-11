@@ -1,0 +1,5 @@
+-r base.txt # includes the base.txt requirements file
+
+gunicorn
+daphne
+# uwsgi # don't think its in use we use gunicorn

@@ -1,0 +1,24 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title%}ShidduchMe{% endblock title %}
+{% block content %}
+
+{% comment %} ToDo: store the usersusername in local storage as well {% endcomment %}
+
+<h1 x-data="{
+  chatToken: $persist('{{ token }}'),
+  username: $persist('{{ username }}'),
+  updateToken() {
+    this.chatToken = '{{ token }}';
+    this.username = '{{ username }}';
+  }
+}" x-init="updateToken()">Chat Room</h1>
+
+
+
+<div id="root" />
+<script src="{% static '@alpinejs/persist/dist/cdn.min.js'%}" defer></script>
+<script src="{% static 'js/index-bundle.js' %}"></script>
+
+{% endblock content %}

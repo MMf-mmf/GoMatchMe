@@ -1,0 +1,19 @@
+{% extends 'emails/base/email_base.html' %}
+
+{% block content %}
+
+<h1>Bounty Paused</h1>
+<p>Hi, {{ bounty_order.from_user.first_name }}</p>
+<p>We wanted to inform you that the bounty for {{ to_user.get_full_name }} has been temporarily paused by our team. This can happen for several reasons, such as:</p>
+<ul>
+    <li>An invalid payment method on file</li>
+    <li>Issues with the bounty details</li>
+    <li>Administrative review</li>
+</ul>
+<p>As a result, the bounty amount of ${{ bounty_order.amount }} has been temporarily removed from {{ to_user.get_full_name }}'s account.</p>
+<p>If you believe this was a mistake or if you have any questions, please reach out to our support team for further assistance.</p>
+<p>To reactivate this bounty for {{ to_user.get_full_name }}, please contact our support team for further assistance.</p>
+<p>Best regards,</p>
+<p>The ShidduchMe Team</p>
+{% endblock content%}
+

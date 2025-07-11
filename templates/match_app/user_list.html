@@ -1,0 +1,56 @@
+{% extends 'base/base.html' %}
+{% load mathfilters %}
+
+{% block title %}Singels Resource{% endblock title %}
+
+{% block content %}
+<section class="lg:mx-24 sm:mx-10 my-9">
+        {% include "match_app/includes/singles_page_header.html" %}
+        <ul role="list" class="px-4 sm:px-6 lg:px-8">
+            {% for profile in singles %}
+            <a href="{% url 'user_detail' profile.user.id %}" class="">
+                <li class="flex justify-between gap-x-6 py-5 border-b border-gray-200">
+                    <div class="flex min-w-0 gap-x-4">
+                    {% if profile.image %}
+                        <img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="{{profile.image.url}}" alt="user Avatar">
+                    {% else %}
+                        {% if profile.gender == '1' %}
+                            <img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="\static\images\boysAvatar.jpg" alt="user Avatar">
+                        {% else %}
+                            <img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="\static\images\girlsAvatar.jpg" alt="user Avatar">
+                        {% endif %}
+                    {% endif %}
+                    <div class="min-w-0 flex-auto">
+                        <p class="text-sm font-semibold leading-6 text-gray-900">{{profile.first_name}} {{profile.last_name}}</p>
+                        <p class="mt-1 text-xs leading-5 text-gray-500">
+                            {% now "Y" as current_year %}
+                            {% with birth_year=profile.date_of_birth|date:"Y" %}
+                            {% with age=current_year|sub:birth_year %}
+                                <span class="mt-1 truncate text-xs leading-5 text-gray-500">Age: {{ age }}</span>
+                            {% endwith %}
+                            {% endwith %}
+                            <span class="mt-1 mx-4 truncate text-xs leading-5 text-gray-500">City: {{profile.city}}</span>
+                            {% for sect in profile.sect %}
+                            <span class="mt-1 truncate text-xs leading-5 text-gray-500">Sect: {{ sect }}{% if not forloop.last %},{% endif %}</span>
+                            {% endfor %}
+                        </p>
+                    </div>
+                    </div>
+                    <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+                    <p class="text-sm leading-6 text-gray-900">{{profile.occupation_1}}</p>
+                    <p class="mt-1 text-xs leading-5 text-gray-500">Joined {{profile.created|date:"M Y"}}</p>
+                    </div>
+                </li>
+            </a>
+            {% empty %}
+                <p>No Singles Found</p>
+            {% endfor %}
+        </ul>
+    </section>
+    {% include 'match_app/user_pagination.html' with page=singles %}
+{% endblock content %}
+{% comment %} 
+    {{user.profile.city}}
+    {{ user.bounty.balance }}
+    {{user.age}}
+ {% endcomment %}

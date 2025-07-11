@@ -1,0 +1,29 @@
+{% if messages %}
+        {% for message in messages %}
+            {% if message.extra_tags != "banner_message"%}
+                {% include 'includes/toast_notification.html' with message=message type=message.tags%}
+            {% endif %}
+        {% endfor %}
+{% endif %}
+ 
+
+{% comment %}
+
+POSIBLE TAGS FROM DJANGOS MESSAGE FRAMEWORK
+IT CAN BE ACCESSED WITH message.tags
+
+debug
+info
+success
+warning
+error 
+
+
+THE TOAST NOTIFICATION FILE ACCPPES 
+default, success, info, warning, danger
+
+IN ORDER TO UTILIZE THE PRE BUILT TOAST NOTIFICATION WE CAN MAKE THE NOTIFICATION TAG ON THE MESSAGE FRAMEWORK TO BE THE SAME AS THE TOAST NOTIFICATION FILE TAGS ABOVE
+THIS CAN BE DONE LIKE THIS
+messages.add_message(request, messages.SUCCESS, "Custom tag message.", tags='custom-tag')
+WE CAN EVEN ADD MORE CUSTOMIZATIONS SUCH AS  message_id='unique-id' SO WE CAN PASS A ID TO THE TOAST NOTIFICATION FILE AS THE DOCS SAYS
+{% endcomment %}

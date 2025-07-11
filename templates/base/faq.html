@@ -1,0 +1,57 @@
+{% extends 'base/base.html' %}
+
+{% block title %}FAQ's{% endblock title %}
+
+{% block content %}
+
+    <div class="bg-white flex-grow">
+        <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-40">
+            <div class="mx-auto max-w-4xl divide-y divide-gray-900/10">
+                <h2 class="text-2xl font-bold leading-10 tracking-tight text-indigo-700">Frequently asked questions</h2>
+                <dl class="mt-10 space-y-6 divide-y divide-gray-900/10">
+                    <div x-data="{ open: window.location.hash === '#how-bountys-work' }" class="pt-6" id="how-bountys-work">
+                        <dt>
+                            <button @click="open = !open" type="button" class="flex w-full items-start justify-between text-left text-gray-900" :aria-expanded="open">
+                                <span class="text-base font-semibold leading-7" >What are bountys and how does it work?</span>
+                                <span class="ml-6 flex h-7 items-center">
+                                    <svg :class="{ 'hidden': open, 'block': !open }" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                                    </svg>
+                                    <svg :class="{ 'hidden': !open, 'block': open }" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </dt>
+                        <dd x-show="open" x-collapse x-cloak class="mt-2 pr-12">
+                            <p class="text-base leading-7 text-gray-600">
+                                "Bounty" is our take on the term "shadchanus gelt." The bounty will be credited to the account of the selected individual. Rest assured, the full pledge amount will only be charged once the match is confirmed. A small fee of $5 USD will be charged to your active card once every six months to keep your bounty active. All activation charges are non-refundable and will count towards your bounty pledge. Upon confirmation that a match has been successfully facilitated by the shadchan, the bounty will be securely transferred to them.
+                            </p>
+                        </dd>
+                    </div>
+                    <!-- More questions... -->
+                       <div x-data="{ open: window.location.hash === '#who-sees-suggestions' }" id="who-sees-suggestions" class="pt-6">
+                        <dt>
+                            <button @click="open = !open"  type="button" class="flex w-full items-start justify-between text-left text-gray-900" :aria-expanded="open">
+                                <span class="text-base font-semibold leading-7"  id="shadchan bounty">Who will see suggestions i make</span>
+                                <span class="ml-6 flex h-7 items-center">
+                                    <svg :class="{ 'hidden': open, 'block': !open }" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                                    </svg>
+                                    <svg :class="{ 'hidden': !open, 'block': open }" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </dt>
+                        <dd x-show="open" x-collapse x-cloak class="mt-2 pr-12">
+                            <p class="text-base leading-7 text-gray-600">Suggestions are seen by all active shadchonim. To view a list of the active shadchonim, head over to <a class="text-indigo-700" href="{% url 'shadchan_list' %}">Shadchan list</a>. In addition, if you tag a shadchan when making a suggestion, we can guarantee that that shadchan will see the suggestion.</p>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock content %}

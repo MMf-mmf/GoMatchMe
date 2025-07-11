@@ -1,0 +1,25 @@
+{% extends 'emails/base/email_base.html' %}
+
+{% block content %}
+
+<h1>Payment Confirmation</h1>
+<p>Dear {{bounty_order.from_user.get_full_name}},</p>
+<p>We are pleased to confirm that your bounty of ${{ bounty_order.amount }} has been successfully added to {{ bounty_order.to_user.get_full_name }}'s account.</p>
+<h3>Transaction Details:</h3>
+<ul>
+    <li>Bounty Amount: ${{ bounty_order.amount }}</li>
+    <li>Recipient: {{ bounty_order.to_user.get_full_name }}</li>
+    <li>Pledge Assurance Charge: $5.00</li>
+</ul>
+<p>In accordance with our payment policy, a $5.00 Pledge Assurance Charge has been applied to your card. This charge helps ensure the integrity of our bounty system.</p>
+<h3>Payment Process Details:</h3>
+<ol>
+    <li>A small fee has been charged to your card to confirm its validity. This fee will be applied towards the bounty if a successful match occurs.</li>
+    <li>The full bounty amount will only be charged if {{ bounty_order.to_user.get_full_name }} becomes engaged and the matchmaker responsible for the match claims the bounty.</li>
+    <li>If no successful match occurs, we will only charge your card once every 6 months as a Pledge Assurance Charge.</li>
+</ol>
+<p>Thank you for participating in ensuring that {{ bounty_order.to_user.first_name }}'s bounty is filled up so that {{ bounty_order.to_user.first_name }} gets the deserving attention.</p>
+<p>Best regards,</p>
+<p>ShidduchMe</p>
+
+{% endblock content%}

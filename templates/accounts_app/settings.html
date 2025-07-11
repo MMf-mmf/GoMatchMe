@@ -1,0 +1,281 @@
+{% extends 'base/duplicate_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+
+{% block title %}Account Settings{% endblock title %}
+
+{% block content %}
+
+<div class="mx-auto max-w-7xl pt-0 lg:flex lg:gap-x-10 lg:px-8" x-data="{ display_deactivate: '{{ selected_form }}' == 'deactivate_form', become_a_shadchan: '{{ selected_form }}' == 'become_a_shadchan_form', become_a_single: '{{ selected_form }}' == 'become_a_single_form' }">
+
+{% include "includes/settings_side_menu.html" %}
+
+    
+{% comment %} LIST HEADING {% endcomment %}
+  <main class="px-6 lg:flex-auto lg:px-0 mt-9">
+    <div class="mx-auto max-w-4xl space-y-16 sm:space-y-20 lg:mx-0 lg:max-w-none">
+      <div class="space-y-12">
+
+
+
+<div class="border-b border-gray-200 bg-white py-3">
+  <div class=" flex flex-wrap items-center justify-between sm:flex-nowrap">
+<div class="lg:flex lg:items-center lg:justify-between align-baseline" >
+
+  <div class="min-w-0 flex-1">
+    <h2 class="text-2xl font-bold leading-7 text-indigo-600 sm:truncate sm:text-3xl sm:tracking-tight">
+        Account Settings
+    </h2>
+    <p class="mt-3 text-lg leading-8 text-gray-600">Manage your account settings.</p>
+  </div>
+</div>
+    {% comment %}
+    <div class="ml-4 mt-2 flex-shrink-0">
+      <button type="button" class="relative inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Create</button>
+    </div> 
+    {% endcomment %}
+</div>
+{% comment %} EDIT BASIC INFO FORM {% endcomment %}
+
+
+  <form class="w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 px-5 py-4 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6" action="{% url 'settings' %}" method="post">
+    {% csrf_token %}
+        <div class="sm:col-span-3">
+          <label for="first-name" class="block text-sm font-medium leading-6 text-gray-900">First name</label>
+          <div class="mt-2">
+             {% render_field user_info_form.first_name class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+          </div>
+        </div>
+
+        <div class="sm:col-span-3">
+          <label for="last-name" class="block text-sm font-medium leading-6 text-gray-900">Last name</label>
+          <div class="mt-2">
+               {% render_field user_info_form.last_name class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %}
+          </div>
+             <input class="hidden" name="user_info"></input>
+        </div>
+             <button type="submit" class="rounded-md mt-[-2] mb-4 bg-white px-3 py-2 text-sm font-semibold text-black-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Update</button>
+    </form>
+
+{% comment %} ACCOUNT ACTIONS {% endcomment %}
+<div class="relative my-16">
+  <div class="absolute inset-0 flex items-center" aria-hidden="true">
+    <div class="w-full border-t border-gray-300"></div>
+  </div>
+  <div class="relative flex justify-center">
+    <span class="bg-white px-2 text-sm text-gray-500">Actions</span>
+  </div>
+</div>
+
+
+<div class="w-full flex justify-between sm:flex-row flex-shrink flex-wrap ">
+
+  <button type="button" class="inline-flex mt-4 items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ml-0.5 h-5 w-5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+    </svg>
+    <a href="{% url 'account_change_password' %}" class="text-white">Change Password</a>
+  </button>
+
+  <button type="button" class="inline-flex items-center mt-4 gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ml-0.5 h-5 w-5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+    </svg>
+
+    <a href="{% url 'account_email' %}" class="text-white">Manage your email address</a>
+  </button>
+
+  <div class="inline-flex rounded-md shadow-sm mt-4">
+    <button type="button" class="relative inline-flex items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10" @click="display_deactivate = !display_deactivate">Deactivate Your Account</button>
+    <div class="relative -ml-px block" @click="display_deactivate = !display_deactivate">
+      <button type="button" class="relative inline-flex items-center rounded-r-md bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10" id="option-menu-button" aria-expanded="true" aria-haspopup="true">
+        <span class="sr-only">Open options</span>
+        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  </div>
+{% comment %} THIS IS WORKING HOWEVER IS ON HOLD FOR NOW {% endcomment %}
+{% comment %} {% if user.account_type == 1 or user.account_type == 2 %}
+    <div class="inline-flex rounded-md shadow-sm mt-4">
+      <button type="button" class="relative inline-flex items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10" @click="become_a_shadchan = !become_a_shadchan">Become A Shadchan</button>
+      <div class="relative -ml-px block" @click="become_a_shadchan = !become_a_shadchan">
+        <button type="button" class="relative inline-flex items-center rounded-r-md bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10" id="option-menu-button" aria-expanded="true" aria-haspopup="true">
+          <span class="sr-only">Open options</span>
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  {% endif %} {% endcomment %}
+
+  {% comment %} THIS IS WORKING HOWEVER IS ON HOLD FOR NOW {% endcomment %}
+  {% comment %} {% if user.account_type == 1 %}
+    <div class="inline-flex rounded-md shadow-sm mt-4">
+      <button type="button" class="relative inline-flex items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10" @click="become_a_single = !become_a_single">Become A Single</button>
+      <div class="relative -ml-px block" @click="become_a_single = !become_a_single">
+        <button type="button" class="relative inline-flex items-center rounded-r-md bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10" id="option-menu-button" aria-expanded="true" aria-haspopup="true">
+          <span class="sr-only">Open options</span>
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  {% endif %} {% endcomment %}
+
+
+</div>
+</div>
+
+{% comment %} DISABLE ACCOUNT FORM {% endcomment %}
+  <form action="{% url 'settings' %}" method="post" x-show="display_deactivate" x-cloak class="w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 px-5 py-4">
+    {% csrf_token %}
+      <h2 class="text-base font-semibold leading-7 text-red-700 px-2">Deactivate Account</h2>
+      <p class="mt-1 text-sm leading-6 text-gray-600 mb-6 px-2">Once you account is deactivated you will no longer be able to login.</p>
+
+      {% include 'includes/form_errors.html' with errors=deactivate_form.non_field_errors %}
+      <div class="sm:col-span-4 px-2">
+        <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Type Your Email Address</label>
+        <div class="mt-1">
+          {% render_field deactivate_form.email class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Confirm Accounts Email"%}
+        </div>
+         {% include 'includes/form_errors.html' with errors=deactivate_form.email.errors %}
+      </div>
+      <input class="hidden" name="deactivate_account"></input>
+      <button type="submit" class="rounded-md mt-4 bg-white px-3 ml-2 py-2 text-sm font-semibold text-red-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ">Deactivate Account</button>
+  </form>
+
+{% comment %} BECOME A SHADCHAN {% endcomment %}
+  <form action="{% url 'settings' %}" method="post" x-show="become_a_shadchan" x-cloak class="w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 px-5 py-4">
+        {% csrf_token %}
+        <h2 class="text-base font-semibold leading-7 text-gray-900 px-2">Become A Shadhcan</h2>
+        <p class="mt-1 text-sm leading-6 text-gray-600 mb-6 px-2">You have already made at least one shidduch and would like to become a registerd shadchan on ShidduchMe.</p>
+        {% include 'includes/form_errors.html' with errors=become_a_shadchan_form.non_field_errors %}
+          <div class="flex w-full flex-wrap">
+              <div class="w-full sm:w-1/2 px-2">
+                <label for="{{become_a_shadchan_form.first_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{become_a_shadchan_form.first_name.label}}</label>
+                <div class="mt-2">
+                  {% render_field become_a_shadchan_form.first_name class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"%}
+                </div>
+                {% include 'includes/form_errors.html' with errors=become_a_shadchan_form.first_name.errors %}
+              </div>
+              <div class="w-full sm:w-1/2 px-2">
+                <label for="{{become_a_shadchan_form.last_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{become_a_shadchan_form.last_name.label}}</label>
+                <div class="mt-2">
+                  {% render_field become_a_shadchan_form.last_name class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"%}
+                </div>
+                {% include 'includes/form_errors.html' with errors=become_a_shadchan_form.last_name.errors %}
+              </div>
+          </div>
+          <div class="mt-3 px-2">
+              <label for="{{become_a_shadchan_form.sect.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900">{{become_a_shadchan_form.sect.label}}</label>
+              {% render_field become_a_shadchan_form.sect  class="block w-full rounded-r-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mt-3" %}
+                {% include 'includes/form_errors.html' with errors=become_a_shadchan_form.sect.errors %}
+            </div>
+          <input class="hidden" name="become_shadchan"></input>
+      <button type="submit" class="rounded-md mt-4 bg-white ml-2 px-3 py-2 text-sm font-semibold text-red-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Submit</button>
+  </form>
+
+  {% comment %} BECOME A SINGLE {% endcomment %}
+  <form action="{% url 'settings' %}" method="post" x-show="become_a_single" x-cloak class="w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 px-5 py-4">
+      {% csrf_token %}
+         <h2 class="text-base font-semibold leading-7 text-gray-900 px-2">Become A Single</h2>
+         <p class="mt-1 text-sm leading-6 text-gray-600 mb-6 px-2">Start your single profile.</p>
+        {% include 'includes/form_errors.html' with errors=become_a_single_form.non_field_errors %}
+
+      <div class="flex w-full flex-wrap">
+          <div class="w-full sm:w-1/2 px-2">
+            <label for="{{become_a_single_form.first_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900 mt-2">{{become_a_single_form.first_name.label}}</label>
+            <div class="mt-1">
+              {% render_field become_a_single_form.first_name class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"%}
+            </div>
+            {% include 'includes/form_errors.html' with errors=become_a_single_form.first_name.errors %}
+          </div>
+          <div class="w-full sm:w-1/2 px-2">
+            <label for="{{become_a_single_form.last_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900 mt-2">{{become_a_single_form.last_name.label}}</label>
+            <div class="mt-1">
+              {% render_field become_a_single_form.last_name class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"%}
+            </div>
+            {% include 'includes/form_errors.html' with errors=become_a_single_form.last_name.errors %}
+          </div>
+      </div>
+
+      <div class="flex w-full flex-wrap">
+          <div class="w-full sm:w-1/2 px-2">
+            <label for="{{become_a_single_form.mothers_first_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900 mt-2">{{become_a_single_form.mothers_first_name.label}}</label>
+            <div class="mt-1">
+              {% render_field become_a_single_form.mothers_first_name class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"%}
+            </div>
+            {% include 'includes/form_errors.html' with errors=become_a_single_form.mothers_first_name.errors %}
+          </div>
+          <div class="w-full sm:w-1/2 px-2">
+            <label for="{{become_a_single_form.mothers_last_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900 mt-2">{{become_a_single_form.mothers_last_name.label}}</label>
+            <div class="mt-1">
+              {% render_field become_a_single_form.mothers_last_name class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"%}
+            </div>
+            {% include 'includes/form_errors.html' with errors=become_a_single_form.mothers_last_name.errors %}
+          </div>
+      </div>
+
+      <div class="flex w-full flex-wrap">
+          <div class="w-full sm:w-1/2 px-2">
+            <label for="{{become_a_single_form.fathers_first_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900 mt-2">{{become_a_single_form.fathers_first_name.label}}</label>
+            <div class="mt-1">
+              {% render_field become_a_single_form.fathers_first_name class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"%}
+            </div>
+            {% include 'includes/form_errors.html' with errors=become_a_single_form.fathers_first_name.errors %}
+          </div>
+          <div class="w-full sm:w-1/2 px-2">
+            <label for="{{become_a_single_form.fathers_last_name.id_for_label}}" class="block text-sm font-medium leading-6 text-gray-900 mt-2">{{become_a_single_form.fathers_last_name.label}}</label>
+            <div class="mt-1">
+              {% render_field become_a_single_form.fathers_last_name class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"%}
+            </div>
+            {% include 'includes/form_errors.html' with errors=become_a_single_form.fathers_last_name.errors %}
+          </div>
+      </div>
+
+
+          <input class="hidden" name="become_single"></input>
+      <button type="submit" class="rounded-md mt-6 bg-white px-3 py-2 ml-2 text-sm font-semibold text-black-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Submit</button>
+  </form>
+
+
+</div>
+
+</main>
+</div>
+</div>
+</div>
+
+
+
+<script src="{% static 'js/multiSelect.js'%}"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+    function initializeMultiSelectTag(id) {
+        var element = document.getElementById(id);
+        if (element) {
+            new MultiSelectTag(id, {
+                rounded: true,    // default true
+                shadow: true,      // default false
+                placeholder: 'Search',  // default Search...
+                tagColor: {
+                    textColor: '#333333',  // Lighter Black
+                    borderColor: '#A9A9A9',  // Lighter Gray
+                    bgColor: '#FFFFFF',  // White
+                },
+            });
+            element.setAttribute('data-initialized', 'true');
+        }
+    }
+    // this will only be ran when the page loads without htmx
+    initializeMultiSelectTag('id_sect');
+});
+</script>
+
+
+{% endblock content %}

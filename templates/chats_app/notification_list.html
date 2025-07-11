@@ -1,0 +1,119 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% comment %} ADD THE SAME FUNCTINALITY TO THE REJECT BUTTON {% endcomment %}
+
+{% block title%}Open Notifications{% endblock title %}
+{% block content %}
+
+<h1 class="text-3xl font-bold mb-4">Open Notifications</h1>
+
+<div class="flex flex-wrap">
+    <div class="w-full md:w-1/2 p-4">
+        <h2 class="text-xl font-bold mb-2">Chat Requests</h2>
+        <ul class="border border-gray-300 rounded-lg p-4">
+            {% for chat_request in chat_requests %}
+                <li class="mb-2 p-4 bg-white rounded-lg shadow-md flex justify-between items-center" id="{{chat_request.from_user.username}}">
+                    <div>
+                        <p class="text-lg font-bold">{{ chat_request.from_user.username }}</p>
+                        <p class="text-gray-600">{{ chat_request.message }}</p>
+                        <p class="text-gray-500 text-sm">{{ chat_request.created }}</p>
+                    </div>
+                    <div>
+                        <form 
+                        hx-post="{% url 'chat_request_accept' chat_request.pk %}"
+                        hx-target="#{{chat_request.from_user.username}}"
+                        hx-swap="outerHTML"
+                        id="accept-request"
+                        >
+                            {% csrf_token %}
+                            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2">
+                                Accept
+                                 {% comment %} <img class="htmx-indicator" src="/spinner.gif"> {% endcomment %}
+                            </button>
+                        </form>
+                        <form 
+                        hx-post="{% url 'chat_request_reject' chat_request.pk %}"  
+                        hx-target="#{{chat_request.from_user.username}}" 
+                        hx-swap="outerHTML" 
+                        id='reject-request'
+                        >
+                            {% csrf_token %}
+                            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                Reject
+                                 {% comment %} <img class="htmx-indicator" src="/spinner.gif"> {% endcomment %}
+                            </button>
+                        </form>
+                    </div>
+                </li>
+            {% empty %}
+                 <p class="mb-2 p-4 bg-white rounded-lg shadow-md text-center">No chat requests found.</p>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="w-full md:w-1/2 p-4">
+        <h2 class="text-xl font-bold mb-2">Recently Accepted Chat Requests</h2>
+        <ul class="border border-gray-300 rounded-lg p-4">
+            {% for chat_request in recently_accepted_chat_requests %}
+                <li class="mb-2 p-4 bg-white rounded-lg shadow-md">
+                    {% comment %} <p class="text-lg font-bold">{{ chat_request.from_user.username }}</p> {% endcomment %}
+                    <p class="text-gray-600">{{ chat_request.from_user.username }} accepted your chat request</p>
+                    <p class="text-gray-500 text-sm">{{ chat_request.accepted }}</p>
+                </li>
+            {% empty %}
+                 <p class="mb-2 p-4 bg-white rounded-lg shadow-md text-center">No recently accepted chat requests found.</p>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="w-full md:w-1/2 p-4">
+        <h2 class="text-xl font-bold mb-2">Unread Messages</h2>
+        <ul class="border border-gray-300 rounded-lg p-4">
+            {% for unread_message in unread_messages %}
+            <a href={% url 'chat_room' conversation_name=unread_message.conversation.name user_id=unread_message.from_user.id %}>
+                <li class="mb-2 p-4 bg-white rounded-lg shadow-md">
+                    <p class="text-lg font-bold">{{ unread_message.from_user.username }}</p>
+                    <p class="text-gray-600">{{ unread_message.content }}</p>
+                    <p class="text-gray-500 text-sm">{{ unread_message.timestamp }}</p>
+                </li>
+            </a>
+            {% empty %}
+                 <p class="mb-2 p-4 bg-white rounded-lg shadow-md text-center">No chat requests found.</p>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+// Background: when htmx fiers a request it looks at the response headers more specifically the hx-trigger header, in our case as part of the response we attach a hx-trigger header which was htmx attached to the DOM
+// chat_request_accepted or chat_request_rejected, then we add a event listiner to that event
+document.body.addEventListener("chat_request_accepted", function(evt){
+    showAcceptAlert();
+})
+document.body.addEventListener("chat_request_rejected", function(evt){
+    showRejectAlert();
+})
+
+function showAcceptAlert() {
+    Swal.fire({
+        title: 'Success!',
+        text: "User's request was granted",
+        icon: 'success',
+        toast: true,
+        position: 'bottom-right',
+        timer: 3000
+    });
+}
+
+function showRejectAlert() {
+    Swal.fire({
+        title: 'Rejected!',
+        text: "User's request was rejected",
+        icon: 'error',
+        toast: true,
+        position: 'bottom-right',
+        timer: 3000
+    });
+}
+</script>
+
+{% endblock content %}

@@ -1,0 +1,13 @@
+{% extends 'emails/base/email_base.html' %}
+
+{% block content %}
+<h1>Bounty Cancellation Confirmation</h1>
+<p>Hi {{ bounty_order.from_user.first_name }},</p>
+<p>We are writing to inform you that your bounty of ${{ bounty_order.amount }} for {{ bounty_order.to_user }} has been successfully cancelled.</p>
+<p>All associated funds have been removed from {{ bounty_order.to_user }}'s account.</p>
+<p>You will no longer incur any follow-up charges related to this bounty.</p>
+<p>If you have any questions, please visit our <a href="{{faq_url}}">FAQ page</a> to learn more about how bounties are processed.</p>
+<p>Best regards,</p>
+<p>The ShidduchMe Team</p>
+{% endblock content%}
+

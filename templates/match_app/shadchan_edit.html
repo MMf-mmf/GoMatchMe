@@ -1,0 +1,408 @@
+{% extends 'base/duplicate_base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}Your Shadchan Profile{% endblock title %}
+
+{% block content %}
+
+{% comment %} <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css"> {% endcomment %}
+<link rel="stylesheet" href="{% static 'css/multiSelect.css' %}" />
+
+<style>
+  .prose-menubar {
+    margin-bottom: 8px !important;
+  }
+  .prose-editor .ProseMirror {
+    padding: 8px 10px !important;
+  }
+</style>
+
+<div class="mx-auto max-w-7xl pt-0 lg:flex lg:gap-x-10 lg:px-8">
+  {% include "includes/settings_side_menu.html" %}
+<div x-data="{ 
+  is_edit_modal_open: '{{ open_model }}' === 'GUIDE_LINES_FORM' || '{{ open_model }}' === 'UPDATE_SHADCHAN_PROFILE_FORM' || '{{ open_model }}' === 'FAQ_FORM', 
+  is_edit_selection: false, 
+  is_edit_profile: '{{ open_model }}' === 'UPDATE_SHADCHAN_PROFILE_FORM', 
+  is_edit_faq: '{{ open_model }}' === 'FAQ_FORM', 
+  is_edit_terms: '{{ open_model }}' === 'GUIDE_LINES_FORM',
+  }">
+ 
+    {% include "match_app/includes/shadchan_edit_modal.html" %}
+
+  <main class="px-4 py-6 sm:px-6 lg:flex-auto lg:px-0 lg:py-10">
+    {% if missing_fields %}
+    <div class="rounded-md bg-yellow-50 p-4">
+  <div class="flex">
+    <div class="flex-shrink-0">
+      <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+      </svg>
+    </div>
+    <div class="ml-3">
+      <h3 class="text-sm font-medium text-yellow-800">Please complete the remaining {{ missing_fields|length }} fields to activate your profile.</h3>
+      <div class="mt-2 text-sm text-yellow-700">
+        <ul role="list" class="list-disc space-y-1 pl-5">
+            {% for missing_field in missing_fields %}
+                <li>{{ missing_field|snake_to_readable }}</li>
+            {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+    {% endif %}
+    <!-- Product -->
+    <div class="lg:grid lg:grid-cols-7 lg:grid-rows-1 lg:gap-x-8 lg:gap-y-10 xl:gap-x-16">
+      <!-- Product image -->
+      <div class="lg:col-span-4 lg:row-end-1 sm:mx-auto max-w-4xl">
+  
+           <ul role="list" class="divide-y divide-gray-200 border-gray-200">
+            <li class="flex py-6">
+            <div class="flex-shrink-0">
+              {% if shadchan.shadchan_profile.profile_image %}
+                <img src="{{ shadchan.shadchan_profile.profile_image.url }}" id="main_shadchan_profile" alt="" class="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48">
+              {% else %}
+                <img id="main_shadchan_profile" src="\static\images\boysAvatar.jpg" alt="" class="image-view h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48">
+              {% endif %}
+            </div>
+            <div class="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
+              <div class="relative pr-9 sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
+                <div>
+                  <div class="flex justify-between">
+                    <h3 class="text-sm">
+                      <a href="#" class="font-medium text-gray-700 hover:text-gray-800"><span class="text-base text-gray-500">{{shadchan.shadchan_profile.get_title_display|default_if_none:""}}</span> {{shadchan.first_name}} {{shadchan.last_name}}</a>
+                    </h3>
+                  </div>
+                  <div class="mt-1 flex text-sm">
+                    <p class="text-gray-500 pr-2 ">{{shadchan.shadchan_profile.get_country_display|default:"Countrys Here"}}</p>
+
+                    {% if shadchan.shadchan_profile.language %}
+                      {% for language in shadchan.shadchan_profile.language %}
+                        <p class="pl-4 text-gray-500">{{ language }}{% if not forloop.last %},{% endif %}</p>
+                      {% endfor %}
+                    {% else %}
+                      <p class="ml-4 border-l border-gray-200 pl-4 text-gray-500">Languages Here </p>
+                    {% endif %}
+
+                  </div>
+                  <div class="mt-1 flex flex-wrap text-sm" style="max-width: 300px;">
+                    {% if shadchan.shadchan_profile.sect %}
+                        {% for sect in shadchan.shadchan_profile.sect %}
+                            <p class="mt-1 pr-3 text-sm font-medium text-gray-900">{{ sect }}{% if not forloop.last %},{% endif %}</p>
+                        {% endfor %}
+                    {% else %}
+                        <p class="mt-1 text-sm font-medium text-gray-900">No Sect Found</p>
+                    {% endif %}
+                </div>
+
+                </div>
+
+                <div class="mt-4 sm:mt-0 sm:pr-9">
+                  {% comment %} template drop down was here {% endcomment %}
+                  <div class="absolute right-0 top-0">
+                    {% comment %} template x button was here {% endcomment %}
+                  </div>
+                </div>
+                
+              </div>
+              {% comment %} TODO: ADD BACK IN WHEN WE HAVE A WORKING SYSTEM TO TRACK HOW ACTIVE A USER IS ACURRENTLY {% endcomment %}
+              {% comment %} 
+              <p class="mt-4 flex space-x-2 text-sm text-gray-700">
+              
+                {% with rating=shadchan.shadchan_profile.activity_rating %}
+                {% if rating == 0 %}
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 flex-shrink-0 text-red-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                    {% elif rating == 1 %}
+                      <svg class="h-5 w-5 flex-shrink-0 text-yellow-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                      </svg>
+                    {% elif rating == 2 %}
+                      <svg  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 flex-shrink-0 text-green-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                      </svg>
+                    {% elif rating == 3 %}
+                      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 flex-shrink-0 text-green-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
+                      </svg>
+                    {% endif %}
+
+                {% endwith %}
+                <span class="text-gray-500">{{shadchan.shadchan_profile.get_activity_rating_display}}</span>
+              </p> 
+              {% endcomment %}
+            </div>
+          </li>
+        </ul>
+        {% comment %} END OF FORMER PRODUCT IMAGE SECTION {% endcomment %}
+      </div>
+
+      <!-- Product details -->
+      <div class="mx-auto mt-14 max-w-4xl sm:mt-16 lg:col-span-3 lg:row-span-2 lg:row-end-2 lg:mt-0 lg:max-w-none">
+        <div class="flex flex-col-reverse">
+          <div class="mt-4">
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl"><span class="text-base text-gray-500">{{shadchan.shadchan_profile.get_title_display|default_if_none:""}}</span> {{shadchan.first_name}} {{shadchan.last_name}}</h1>
+
+            <h2 id="information-heading" class="sr-only">Product information</h2>
+            <p class="mt-2 text-sm text-gray-500">Joind<time datetime="" class="text-gray-700 ml-2">{{ shadchan.shadchan_profile.created|date:"F Y" }}</time></p>
+          </div>
+        </div>
+
+        <p class="mt-6 text-gray-500 max-w-2xl">{{shadchan.shadchan_profile.bio|default_if_none:"No Bio Found"}}</p>
+        {% comment %} grid-cols-1  sm:grid-cols-2  (for styeling of tow buttons{% endcomment %}
+        <div class="mt-10 grid  gap-x-6 gap-y-4 ">
+       
+            
+       <div class="w-full flex rounded-md shadow-sm" x-data="{ open: false }" @click.away="is_edit_selection = false">
+          <button type="button" @click="is_edit_selection = !is_edit_selection" class="relative w-full inline-flex items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-indigo-600 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10 animate-pulse">Edit This Page</button>
+          <div class="relative -ml-px block">
+            <button type="button" class="relative inline-flex items-center rounded-r-md bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10" @click="is_edit_selection = !is_edit_selection" aria-expanded="true" aria-haspopup="true">
+              <span class="sr-only">Open options</span>
+              <svg class="h-5 w-5 text-indigo-600 animate-pulse" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+              </svg>
+            </button>
+
+
+        <div x-show="is_edit_selection" x-cloak
+            x-transition:enter="transition ease-out duration-100" 
+            x-transition:enter-start="transform opacity-0 scale-95" 
+            x-transition:enter-end="transform opacity-100 scale-100" 
+            x-transition:leave="transition ease-in duration-75" 
+            x-transition:leave-start="transform opacity-100 scale-100" 
+            x-transition:leave-end="transform opacity-0 scale-95" 
+            class="absolute right-0 z-10 -mr-1 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" 
+            role="menu" 
+            aria-orientation="vertical" 
+            aria-labelledby="option-menu-button" 
+            tabindex="-1">
+              <div class="py-1" role="none">
+                <button @click="is_edit_profile=true, is_edit_modal_open=true, is_edit_selection=false, is_edit_faq=false, is_edit_terms=false" class="text-gray-70 text-left block px-4 py-2 w-full text-sm hover:bg-gray-50 hover:text-gray-900" role="menuitem" tabindex="-1" id="option-menu-item-0">Edit Profile Data</button>
+                <button @click="is_edit_terms=true, is_edit_modal_open=true, is_edit_selection=false, is_edit_faq=false, is_edit_profile=false" class="text-gray-700 text-left block px-4 w-full py-2 text-sm hover:bg-gray-50 hover:text-gray-900" role="menuitem" tabindex="-1" id="option-menu-item-2">Edit Your Guidelines</button>
+                <button @click="is_edit_faq=true, is_edit_modal_open=true, is_edit_selection=false, is_edit_profile=false, is_edit_terms=false" class="text-gray-700 text-left block w-full px-4 py-2 text-sm hover:bg-gray-50 hover:text-gray-900" role="menuitem" tabindex="-1" id="option-menu-item-1">Create New FAQ's</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+      {% comment %} END EDIT BUTTONS {% endcomment %}
+        </div>
+        <div class="mt-10 border-t border-gray-200 pt-10">
+          <h3 class="text-sm font-medium text-gray-900">Highlights</h3>
+          <div class="prose prose-sm mt-4 text-gray-500">
+            {% if shadchan.shadchan_profile.highlights %}
+              <ul role="list">
+                {% for highlight in shadchan.shadchan_profile.highlights %}
+                  <li>{{ highlight }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p>Your Highlights Go Here</p>
+            {% endif %}
+          </div>
+        </div>
+
+        {% comment %} <div class="mt-10 border-t border-gray-200 pt-10">
+          <h3 class="text-sm font-medium text-gray-900">License</h3>
+          <p class="mt-4 text-sm text-gray-500">For personal and professional use. You cannot resell or redistribute these icons in their original or modified state. <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Read full license</a></p>
+        </div> {% endcomment %}
+
+        <div class="mt-10 border-t border-gray-200 pt-10">
+          <h3 class="text-sm font-medium text-gray-900">Contact</h3>
+          <ul role="list" class="mt-4 flex items-center space-x-6">
+            <li >
+           <a href="tel:{{ shadchan.shadchan_profile.public_phone_number }}" class="tooltip flex h-6 w-6 items-center justify-center text-gray-400 hover:text-gray-500" data-tooltip="{{ shadchan.shadchan_profile.public_phone_number }}">
+                <span class="sr-only">Phone</span>
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                </svg>
+              </a>
+            </li>
+            <li>
+             <a href="{{ 'mailto:'|add:shadchan.shadchan_profile.public_email }}" data-tooltip="{{ shadchan.shadchan_profile.public_email }}" class="tooltip lex h-6 w-6 items-center justify-center text-gray-400 hover:text-gray-500">
+                <span class="sr-only">Email</span>
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                </svg>
+              </a>
+            </li>
+            {% comment %} TODO: THE BELOW CHAT ICON CAN BE USED IF CHAT IS EVER IMPLAMENTED {% endcomment %}
+            {% comment %} <li>
+            <a href="#" class="flex h-6 w-6 items-center justify-center text-gray-400 hover:text-gray-500">
+                <span class="sr-only">Chat</span>
+                  <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+                  </svg>
+              </a>
+            </li> {% endcomment %}
+          </ul>
+        
+        </div>
+      </div>
+      
+      <div class="mx-auto mt-16 w-full max-w-4xl lg:col-span-4 lg:mt-0 lg:max-w-none" x-data="{selected_button: '1'}">
+        <div>
+          <div class="border-b border-gray-200">
+            <div class="-mb-px flex space-x-8" aria-orientation="horizontal" role="tablist">
+              <!-- Selected: "border-indigo-600 text-indigo-600", Not Selected: "border-transparent text-gray-700 hover:border-gray-300 hover:text-gray-800" -->
+              <button id="tab-faq" class="border-transparent text-gray-700 hover:border-gray-300 hover:text-gray-800 whitespace-nowrap border-b-2 py-6 text-sm font-medium" x-bind:class="{'border-indigo-600 text-indigo-600': selected_button=='1'}"  aria-controls="tab-panel-faq" role="tab" type="button" @click="selected_button='1'">FAQ</button>
+              <button id="tab-license" class="border-transparent text-gray-700 hover:border-gray-300 hover:text-gray-800 whitespace-nowrap border-b-2 py-6 text-sm font-medium" x-bind:class="{'border-indigo-600 text-indigo-600': selected_button=='2'}" aria-controls="tab-panel-license" role="tab" type="button" @click="selected_button='2'">Guidelines</button>
+            </div>
+          </div>
+
+          {% comment %} <!-- 'Customer Reviews' panel, show/hide based on tab state -->
+          <div id="tab-panel-reviews" class="-mb-10" aria-labelledby="tab-reviews" role="tabpanel" tabindex="0" x-show="selected_button=='0'" x-cloak>
+            <h3 class="sr-only">Customer Reviews</h3>
+
+            {% for review in shadchan.shadchan_profile.shadchan_reviews.all %}
+              <div class="flex space-x-4 text-sm text-gray-500">
+                <div class="flex-none py-10">
+                	<img class="h-10 w-10 rounded-full bg-gray-100" src="\static\images\boysAvatar.jpg" alt="user Avatar">
+                </div>
+                <div class="py-10">
+                  <h3 class="font-medium text-gray-900">{{ review.user.first_name }}</h3>
+                  <p x-data="timeHandler()" x-init="getLocalTime('{{ review.created|date:'c' }}')">
+                      <time x-text="localTime" datetime="{{ review.created }}"></time>
+                  </p>
+                  <div class="mt-4 flex items-center">
+                    <!-- Active: "text-yellow-400", Default: "text-gray-300" -->
+                    
+                    {% for i in stars %}
+                        <svg class="h-5 w-5 flex-shrink-0
+                            {% if review.rating >= i %} text-yellow-400 {% else %} text-gray-300 {% endif %}" 
+                            viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
+                        </svg>
+                    {% endfor %}
+                  </div>
+                  <p class="sr-only">{{ review.rating }} out of 5 stars</p>
+
+                  <div class="prose prose-sm mt-4 max-w-none text-gray-500">
+                    <p>{{ review.review }}</p>
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+              <p class="text-gray-500">No reviews</p>
+            {% endfor %}
+            <!-- More reviews... -->
+          </div> {% endcomment %}
+
+     
+
+          <div id="tab-panel-faq" class="text-sm text-gray-500" aria-labelledby="tab-faq" role="tabpanel" tabindex="0" x-show="selected_button=='1'" x-cloak>
+            <h3 class="sr-only">Frequently Asked Questions</h3>
+            <dl>
+            {% for faq in shadchan.shadchan_profile.shadchan_faq.all %}
+              <div class="flex flex-row items-end cursor-pointer" hx-get="{% url 'edit_shadchan_faq' faq.id %}" hx-target="#htmx_target" hx-swap="innerHTML">
+                <dt class="mt-10 font-medium text-gray-900">{{ faq.question }}</dt>
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-1 mb-[2px]">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                </svg>
+              </div>
+                <dd class="prose prose-sm mt-1 max-w-none text-gray-500">
+                    <p>{{ faq.answer|safe }}</p>
+                </dd>
+                       {% empty %}
+                    <h4 class="prose prose-sm max-w-none text-gray-500 mt-10">Your FAQ's Go Here</h4>
+            {% endfor %}
+            </dl>
+          </div>
+          <!-- 'License' panel, show/hide based on tab state -->
+          <div id="tab-panel-license" class="pt-10 text-gray-500" aria-labelledby="tab-license" role="tabpanel" tabindex="0" x-show="selected_button=='2'" x-cloak>
+            <h3 class="sr-only">Guidelines</h3>
+
+            <div class="prose prose-sm max-w-none text-gray-500">
+                {% comment %} <h4 class="text-gray-500 mt-10">Guidelines</h4> {% endcomment %}
+                {% comment %} <h4 class="mt-2">{{ guideline.title }}</h4> {% endcomment %}
+                {{ shadchan.shadchan_profile.shadchan_guidelines.guideline|safe|default:"Your Guidelines Go Here" }}
+                {% comment %} <h4 class="text-gray-500">Your Terms Rules of conduct go here</h4> {% endcomment %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<span id="htmx_target"></span>
+</div>
+
+<script src="{% static 'js/multiSelect.js'%}"></script>
+
+
+
+<script>
+function initializeMultiSelectTag(id) {
+    if (!document.getElementById(id).hasAttribute('data-initialized')) {
+        new MultiSelectTag(id, {
+            rounded: true,    // default true
+            shadow: true,      // default false
+            placeholder: 'Search',  // default Search...
+            tagColor: {
+                textColor: '#333333',  // Lighter Black
+                borderColor: '#A9A9A9',  // Lighter Gray
+                bgColor: '#FFFFFF',  // White
+            },
+        });
+        document.getElementById(id).setAttribute('data-initialized', 'true');
+    }
+}
+// this will only be ran when the page loades without htmx
+  initializeMultiSelectTag('sect');
+  initializeMultiSelectTag('language');
+// this will only be ran when the page loades after htmx
+document.body.addEventListener('htmx:afterOnLoad', function() {
+    initializeMultiSelectTag('sect');
+    initializeMultiSelectTag('language');
+});
+</script>
+
+
+<script>
+function timeHandler() {
+    return {
+        localTime: '',
+        getLocalTime(utcTime) {
+            let date = new Date(utcTime);
+            this.localTime = date.toLocaleDateString();
+        }
+    }
+}
+</script>
+
+
+<script>
+   function initFileInput() {
+      // Get the file input element
+      const imageInput = document.getElementById('id_profile_image');
+
+      // Update the file name element when a file is selected
+      imageInput.addEventListener('change', () => {
+        const file = imageInput.files[0];
+        if (file) {
+          // now add the image preview
+          const reader = new FileReader();
+          reader.addEventListener('load', () => {
+            // add hidden to profile-avatar 
+            document.getElementById('profile-avatar').classList.add('hidden');
+            document.getElementById('image-view').classList.remove('hidden');
+            document.getElementById('image-view').setAttribute('src', reader.result);
+            // add the title file.name
+            document.getElementById('image-view').setAttribute('title', file.name);
+            document.getElementById('main_shadchan_profile').classList.remove('hidden');
+            document.getElementById('main_shadchan_profile').setAttribute('src', reader.result);
+
+          });
+          reader.readAsDataURL(file);
+        } else {
+          // If needed, handle the case where no file is selected
+        }
+      });
+    }
+</script>
+
+{% endblock content %}

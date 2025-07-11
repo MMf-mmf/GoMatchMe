@@ -1,0 +1,87 @@
+{% extends 'base/base.html' %}
+{% load widget_tweaks %}
+{% block title %}Suggestion Successfully Submitted{% endblock title %}
+
+{% block content %}
+
+
+ <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
+
+      <div class="text-center">
+        <h2 class="text-3xl font-bold tracking-tight text-indigo-600 sm:text-4xl">Suggestion Successfully Submitted</h2>
+        <p class="mt-2 text-lg leading-8 text-gray-600">Your Suggestion is now live and can be viewd by dozens of shadchanim.</p>
+      </div>
+
+  <div class="mx-auto max-w-3xl mt-10">
+    <!-- Content goes here -->
+<ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-5">
+  <li class="col-span-2 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow">
+    <div class="flex flex-1 flex-col p-8">
+        {% if boys_image %}
+            <img class="mx-auto h-20 w-20 flex-shrink-0 rounded-full" src="{{boys_image}}" alt="">
+        {% else %}
+            <img class="mx-auto h-20 w-20 flex-shrink-0 rounded-full" src="\static\images\boysAvatar.jpg" alt="">
+        {% endif %}
+      <h3 class="mt-6 text-sm font-medium text-gray-900">{{suggestion.boys_first_name}} {{suggestion.boys_last_name}}</h3>
+      <dl class="mt-1 flex flex-grow flex-col justify-between">
+        <dt class="sr-only">Location</dt>
+        <dd class="text-sm text-gray-500">{{suggestion.boys_city}} {{suggestion.boys_country}}</dd>
+        <dt class="sr-only">Role</dt>
+        <dd class="mt-3">
+          <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Active</span>
+        </dd>
+      </dl>
+    </div>
+    <div>
+    </div>
+  </li>
+
+<li class="mt-auto mb-auto lg:col-span-1 md:col-span-1 sm:col-span-2">
+    <div class="relative">
+     <div class="absolute inset-0 flex items-center" aria-hidden="true">
+       <div class="w-full border-t border-gray-300"></div>
+     </div>
+     <div class="relative flex justify-center">
+       <span class="bg-white px-2 text-sm text-gray-500">To</span>
+     </div>
+    </div>
+</li>
+  
+  <!-- More people... -->
+  <li class="col-span-2 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow">
+    <div class="flex flex-1 flex-col p-8">
+        {% if girls_image %}
+            <img class="mx-auto h-20 w-20 flex-shrink-0 rounded-full" src="{{girls_image}}" alt="">
+        {% else %}
+            <img class="mx-auto h-20 w-20 flex-shrink-0 rounded-full" src="\static\images\girlsAvatar.jpg" alt="">
+        {% endif %}
+      <h3 class="mt-6 text-sm font-medium text-gray-900">{{suggestion.girls_first_name}} {{suggestion.girls_last_name}}</h3>
+      <dl class="mt-1 flex flex-grow flex-col justify-between">
+        <dt class="sr-only">Location</dt>
+        <dd class="text-sm text-gray-500">{{suggestion.girls_city}}, {{suggestion.girls_country}}</dd>
+        <dt class="sr-only">Status</dt>
+        <dd class="mt-3">
+          <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Active</span>
+        </dd>
+      </dl>
+    </div>
+    <div>
+    </div>
+  </li>
+</ul>
+
+<div class="my-16 p-4 flex items-center justify-evenly gap-x-6 rounded-lg bg-white text-center shadow">
+    <a href="{% url 'make_suggestion_blank' %}" title="Make another suggestion" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"><span aria-hidden="true">&larr;</span> Suggest Again</a>
+    <a href="{% url 'users_suggestions' %}" class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">View Status <span aria-hidden="true">→</span></a>
+</div>
+
+</div>
+
+</div>
+
+
+
+
+{% endblock content %}
+
+{% comment %} come up design for this page {% endcomment %}

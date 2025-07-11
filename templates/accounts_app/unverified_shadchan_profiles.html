@@ -1,0 +1,72 @@
+{% extends 'base/duplicate_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load notifications_tags %}
+
+{% block title %}Unverified Shadchan Profiles{% endblock title %}
+
+{% block content %}
+
+
+<div class="mx-auto max-w-7xl pt-0 lg:flex lg:gap-x-10 lg:px-8 h-full">
+{% include "includes/settings_side_menu.html" %}
+<section class="px-4 py-6 sm:px-6 lg:flex-auto lg:px-0 lg:py-10">
+ <h2 class="text-2xl font-bold leading-7 text-indigo-600 sm:truncate sm:text-3xl sm:tracking-tight">Pending Shadchan Requests</h2>
+<div>
+<div class="mt-8 flow-root">
+<div class="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
+  <div class="inline-block min-w-full py-2 align-middle">
+    <table class="min-w-full border-separate border-spacing-0">
+      <thead>
+        <tr>
+          <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8">Username</th>
+          <th scope="col" class="sticky top-0 z-10 hidden border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:table-cell">Email</th>
+          <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-4 backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
+            <span class="sr-only">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="pending_shadchan">
+        {% for user in pending_users %}
+        <tr>
+          <td class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">{{ user.username }}</td>
+          <td class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500 sm:table-cell">{{ user.email }}</td>
+          <td class="relative whitespace-nowrap border-b border-gray-200 py-4 pr-4 text-right text-sm font-medium sm:pr-8 lg:pr-8">
+            <form method="post" class="inline-flex">
+              {% csrf_token %}
+              <input type="hidden" name="user_id" value="{{ user.id }}">
+              <button type="submit" name="action" value="accept" class="text-green-600 hover:text-green-900 mr-4">Accept</button>
+              <button type="submit" name="action" value="deny" class="text-red-600 hover:text-red-900">Deny</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3" class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">No pending requests.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+{% comment %} {% if messages %}
+<div class="fixed bottom-0 right-0 m-8">
+  {% for message in messages %}
+    <div class="bg-white border-t-4 border-{{ message.tags }}-500 rounded-b text-{{ message.tags }}-900 px-4 py-3 shadow-md" role="alert">
+      <div class="flex">
+        <div class="py-1"><svg class="fill-current h-6 w-6 text-{{ message.tags }}-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
+        <div>
+          <p class="font-bold">{{ message }}</p>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %} {% endcomment %}
+
+{% endblock content %}

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ShidduchMe Notification{% endblock %}</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            color: #334155;
+            line-height: 1.6;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo img {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .content {
+            padding: 20px 0;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        h1 {
+            color: #4f46e5;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        a {
+            color: #4F46E5;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        .social-links {
+            margin-bottom: 15px;
+        }
+
+        .social-links a {
+            margin: 0 10px;
+            color: #4F46E5;
+            text-decoration: none;
+        }
+
+        .disclaimer {
+            font-size: 12px;
+            color: #94a3b8;
+            max-width: 500px;
+            margin: 0 auto 15px;
+        }
+
+        .copyright {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        {% include "emails/base/email_header.html" %}
+        <div class="content">
+            {% block content %} 
+            
+            {% endblock %}
+            {% comment %} <h1>Donation Subscription Cancelled</h1>
+            {% if donation.from_user %}
+                <p>Dear {{ donation.from_user.first_name }},</p>
+            {% else %}
+                <p>Dear Supporter,</p>
+            {% endif %}
+            <p>We wanted to inform you that your monthly donation subscription has been successfully canceled.</p>
+            <p>If this was unintentional or if you wish to continue supporting our mission, please visit our <a href="{{ donation_link }}">Partner With Us</a> page to create a new donation subscription.</p>
+            <p>Should you have any questions or require assistance, please don't hesitate to contact our support team at <a href="mailto:support@ShidduchMe.com">support@ShidduchMe.com</a>.</p>
+            <p>Thank you for your past support. Your contributions have made a significant impact on our mission.</p>
+            <p>Best regards,<br>The ShidduchMe Team</p> {% endcomment %}
+        </div>
+
+        {% include "emails/base/email_footer.html" %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% extends 'emails/base/email_base.html' %}
+
+{% block content %}
+
+ <h1>Donation Subscription Cancelled</h1>
+{% if donation.from_user %}
+    <p>Dear {{ donation.from_user.first_name }},</p>
+{% else %}
+    <p>Dear Supporter,</p>
+{% endif %}
+<p>We wanted to inform you that your monthly donation subscription has been successfully canceled.</p>
+<p>If this was unintentional or if you wish to continue supporting our mission, please visit our <a href="{{ donation_link }}">Partner With Us</a> page to create a new donation subscription.</p>
+<p>Should you have any questions or require assistance, please don't hesitate to contact our support team at <a href="mailto:support@ShidduchMe.com">support@ShidduchMe.com</a>.</p>
+<p>Thank you for your past support. Your contributions have made a significant impact on our mission.</p>
+<p>Best regards,<br>The ShidduchMe Team</p> 
+
+{% endblock content%}

@@ -1,0 +1,91 @@
+services:
+
+  db:
+    image: postgres:16.2
+    restart: always
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  cache:
+    image: redis:7.2.4
+    restart: always
+    volumes:
+      - ./data/cache:/data
+
+  rabbitmq:
+    image: rabbitmq:3.13.7-management
+    restart: always
+    ports:
+      - "5672:5672"  # AMQP protocol port
+      - "15672:15672"  # Management UI
+    volumes:
+      - ./data/rabbitmq:/var/lib/rabbitmq
+
+  web:
+    build: .
+    command: ["./wait-for-it.sh", "db:5432", "--",
+              "uwsgi", "--ini", "/code/config/uwsgi/uwsgi.ini"]
+    restart: always
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=project.settings.local
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - db
+      - cache
+      - rabbitmq
+
+  celery_worker:
+    build: .
+    command: ["./wait-for-it.sh", "rabbitmq:5672", "--",
+              "celery", "-A", "project", "worker", "--loglevel=info"]
+    restart: always
+    volumes:
+      - .:/code
+    environment:
+      - DJANGO_SETTINGS_MODULE=project.settings.local
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+    depends_on:
+      - db
+      - cache
+      - rabbitmq
+
+  nginx:
+    image: nginx:1.25.5
+    restart: always
+    volumes:
+      - ./config/nginx:/etc/nginx/templates
+      - .:/code
+    ports:
+      - "80:80"
+      - "443:443"
+
+  # daphne:
+  #   build: .
+  #   working_dir: /code/project/
+  #   command: ["../wait-for-it.sh", "db:5432", "--",
+  #             "daphne", "-b", "0.0.0.0", "-p", "9001",
+  #             "project.asgi:application"] 
+  #   restart: always
+  #   volumes:
+  #     - .:/code
+  #   environment:
+  #     - DJANGO_SETTINGS_MODULE=project.settings.prod
+  #     - POSTGRES_DB=postgres
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #   depends_on:
+  #     - db
+  #     - cache

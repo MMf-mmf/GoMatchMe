@@ -1,0 +1,22 @@
+{% extends 'emails/base/email_base.html' %}
+
+{% block content %}
+
+<h1>Thank You for Your Donation</h1>
+{% if donation.from_user %}
+<p>Dear {{ donation.from_user.first_name }},</p>
+{% else %}
+<p>Dear Donor,</p>
+{% endif %}
+<p>Thank you for your generous donation of ${{ donation.amount }} to ShidduchMe.</p>
+{% if donation.recurring_payment %}
+<p>We are deeply grateful for your commitment to donate ${{ donation.amount }} monthly for the next {{ donation.number_of_months }} months.</p>
+{% else %}
+<p>Your support is invaluable in helping us continue our mission of connecting people and creating meaningful matches.</p>
+{% endif %}
+<br>
+<p>If you have any questions or require further assistance, please don't hesitate to reach out to our support team.</p>
+<p>With sincere appreciation,</p>
+<p>The ShidduchMe Team</p>
+{% endblock content%}
+ 

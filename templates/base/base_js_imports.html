@@ -1,0 +1,19 @@
+{% load django_htmx %} {% load static %}
+
+
+  <script src="{% static 'js/htmx.min.js'%}"></script>
+  <script src="{% static 'js/htmx_alpine_morph.js'%}"></script>
+  
+  <!-- Alpine Plugins -->
+  <script defer src="https://unpkg.com/@alpinejs/morph@3.x.x/dist/cdn.min.js"></script>
+  <script src="{% static '@alpinejs/mask/dist/cdn.min.js'%}" defer></script>
+  {% comment %} <script src="{% static '@alpinejs/persist/dist/cdn.min.js'%}" defer></script> {% endcomment %}
+  <script src="{% static '@alpinejs/focus/dist/cdn.min.js'%}" defer></script>
+  <script src="{% static '@alpinejs/collapse/dist/cdn.min.js'%}" defer></script>
+
+  <!-- Alpine Core -->
+  <script src="{% static 'js/alpine.min.js'%}" defer></script>
+  <script src="{% static 'js/base.js' %}" defer></script>
+
+
+{% django_htmx_script %}

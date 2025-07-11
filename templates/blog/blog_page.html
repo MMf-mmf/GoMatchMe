@@ -1,0 +1,97 @@
+{% extends "base/base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags %}
+{% load static %}
+
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/base_blog.css' %}" />
+
+<div class="bg-white py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl lg:text-center">
+            <h2 class="text-base font-semibold leading-7 text-indigo-600">{{ page.date }}</h2>
+            <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{{ page.title }}</p>
+            <p class="mt-6 text-lg leading-8 text-gray-600">{{ page.intro }}</p>
+        </div>
+        <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24">
+            <div class="lg:w-full lg:max-w-2xl lg:flex-auto">
+                <div class="text-xl leading-8 text-gray-600">{{ page.body|richtext }}</div>
+            </div>
+            {% comment %} DISPLAY ALL AUTHERS {% endcomment %}
+            <div class="flex justify-between items-end w-full sm:flex-row">
+                <div>
+                {% with authors=page.authors.all %}
+                    {% if authors %}
+                        {% for author in authors %}
+                            <div class="mt-6 flex border-t border-gray-900/5 pt-6">
+                                <div class="relative flex items-center gap-x-4">
+                                    {% if author.author_image %}
+                                        {% image author.author_image fill-360x202 as img %}
+                                        <img src="{{ img.url }}" alt="{{ post.title }}" class="h-10 w-10 rounded-full bg-gray-50 object-cover">
+                                    {% endif %}
+                                    <div class="text-sm leading-6">
+                                        <p class="font-semibold text-gray-900">
+                                        <span>
+                                            <span class="absolute inset-0"></span>
+                                            {{ author.name }}
+                                        </span>
+                                        </p>
+                                        <p class="text-gray-600">{{author.title}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                </div>
+                <div>
+                {% comment %} TAGS {% endcomment %}
+                {% with tags=page.tags.all %}
+                    {% if tags %}
+                    <div class="tags">
+                        {% comment %} <h3>Tags</h3> {% endcomment %}
+                        {% for tag in tags %}
+                            <a href="{% slugurl 'tags' %}?tag={{ tag }}"><button type="button" class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100">{{ tag }}</button></a>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                {% comment %} back to blog home page {% endcomment %}
+            </div>
+        </div>
+    
+        <a href="{{ page.get_parent.url }}" class="relative mt-12 z-10 max-w-xs rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Main Page
+        </a>
+
+        </div>
+  </div>
+</div>
+
+
+
+
+
+
+ 
+
+
+
+    {% comment %} ANY GALARY IMAGES {% endcomment %}
+    {% comment %} {% for item in page.gallery_images.all %}
+        <div style="float: inline-start; margin: 10px">
+            {% image item.image fill-320x240 %}
+            <p>{{ item.caption }}</p>
+        </div>
+    {% endfor %} {% endcomment %}
+    {% comment %} BACK LINK {% endcomment %}
+
+  
+    
+
+{% endblock %}

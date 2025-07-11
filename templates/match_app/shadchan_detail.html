@@ -1,0 +1,317 @@
+{% extends 'base/base.html' %}
+{% load tz %}
+{% block title %}Shadchanim List{% endblock title %}
+
+{% block content %}
+
+<div class="bg-white" x-data="{ request_contact_modal: false }">
+  {% if not chat_request %}
+    {% include "match_app/includes/request_to_contact_shadchen_modal.html" %}
+  {% endif %}
+  <div class="mx-auto px-4 py-8 sm:px-10 sm:py-10 lg:max-w-7xl lg:px-8">
+    <!-- Product -->
+     {% comment %} lg:grid-cols-7 {% endcomment %}
+    <div class="lg:grid  lg:grid-rows-1 lg:gap-x-8 lg:gap-y-10 xl:gap-x-16">
+      <!-- Product image -->
+       {% comment %} mx-auto mt-14 max-w-2xl sm:mt-16 lg:col-span-3 lg:row-span-2 lg:row-end-2 lg:mt-0 lg:max-w-none {% endcomment %}
+      <div class="lg:col-span-4 lg:row-end-1 max-w-4xl">
+  
+           <ul role="list" class="divide-y divide-gray-200 border-gray-200">
+            <li class="flex py-6">
+            <div class="flex-shrink-0">
+              {% if shadchan.shadchan_profile.profile_image %}
+                <img src="{{ shadchan.shadchan_profile.profile_image.url }}" id="main_shadchan_profile" alt="" class="object-cover h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48">
+              {% else %}
+                <img id="main_shadchan_profile" src="\static\images\boysAvatar.jpg" alt="" class="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48">
+              {% endif %}
+            </div>
+
+            <div class="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
+              <div class="relative pr-9 sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
+                <div>
+                  <div class="flex justify-between">
+                    <h3 class="text-sm">
+                      <a href="#" class="font-medium text-gray-700 hover:text-gray-800"><span class="text-base text-gray-500">{{shadchan.shadchan_profile.get_title_display|default_if_none:""}}</span> {{shadchan.first_name}} {{shadchan.last_name}}</a>
+                    </h3>
+                  </div>
+                  <div class="mt-1 flex text-sm">
+                    <p class="text-gray-500">{{shadchan.shadchan_profile.get_country_display|default_if_none:"No Country Found"}}</p>
+                    {% if shadchan.shadchan_profile.language %}
+                      {% for language in shadchan.shadchan_profile.language %}
+                        <p class="ml-4 border-l border-gray-200 pl-4 text-gray-500">{{ language }}{% if not forloop.last %},{% endif %}</p>
+                      {% endfor %}
+                    {% else %}
+                      <p class="ml-4 border-l border-gray-200 pl-4 text-gray-500">No +Language Found</p>
+                    {% endif %}
+                  </div>
+                  {% comment %} <p class="mt-1 text-sm font-medium text-gray-900">{{shadchan.shadchan_profile.get_sect_display|default_if_none:"No Sect Found"}}</p> {% endcomment %}
+                </div>
+                  <div class="mt-1 flex flex-wrap text-sm" style="max-width: 300px;">
+                    {% if shadchan.shadchan_profile.sect %}
+                        {% for sect in shadchan.shadchan_profile.sect %}
+                            <p class="mt-1 pr-3 text-sm font-medium text-gray-900">{{ sect }}{% if not forloop.last %},{% endif %}</p>
+                        {% endfor %}
+                    {% else %}
+                        <p class="mt-1 text-sm font-medium text-gray-900">No Sect Found</p>
+                    {% endif %}
+                </div>
+                <div class="mt-4 sm:mt-0 sm:pr-9">
+                  {% comment %} template drop down was here {% endcomment %}
+                  <div class="absolute right-0 top-0">
+                    {% comment %} template x button was here {% endcomment %}
+                  </div>
+                </div>
+                
+              </div>
+
+              {% comment %} 
+              <p class="mt-4 flex space-x-2 text-sm text-gray-700" title="how active is this shadchan, Note all shadchonim have active accounts">
+              
+                {% with rating=shadchan.shadchan_profile.activity_rating %}
+                  {% if rating == 0 %}
+                      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 flex-shrink-0 text-red-500">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181" />
+                      </svg>
+                      {% elif rating == 1 %}
+                        <svg class="h-5 w-5 flex-shrink-0 text-green-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                        </svg>
+                      {% elif rating == 2 %}
+                        <svg  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 flex-shrink-0 text-green-500">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                        </svg>
+                      {% elif rating == 3 %}
+                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 flex-shrink-0 text-yellow-500">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
+                        </svg>
+                      {% endif %}
+                 {% endwith %}
+                <span class="text-gray-500">{{shadchan.shadchan_profile.get_activity_rating_display}}</span>
+              </p> 
+              {% endcomment %}
+            </div>
+          </li>
+        </ul>
+        {% comment %} END OF FORMER PRODUCT IMAGE SECTION {% endcomment %}
+      </div>
+
+      <!-- Product details -->
+      <div class="mx-auto mt-14 max-w-4xl sm:mt-16 lg:col-span-3 lg:row-span-2 lg:row-end-2 lg:mt-0 lg:max-w-none">
+        <div class="flex flex-col-reverse">
+          <div class="mt-4">
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl"><span class="text-base text-gray-500">{{shadchan.shadchan_profile.get_title_display|default_if_none:""}}</span> {{shadchan.first_name}} {{shadchan.last_name}}</h1>
+
+            <h2 id="information-heading" class="sr-only">Product information</h2>
+            <p class="mt-2 text-sm text-gray-500">Joind On <time datetime="" class="text-gray-700 ml-2">{{ shadchan.shadchan_profile.created|date:"F Y" }}</time></p>
+          </div>
+        </div>
+
+        <p class="mt-6 text-gray-500 max-w-2xl">{{shadchan.shadchan_profile.bio|default_if_none:"No Bio Found"}}</p>
+        {% comment %} grid-cols-1  sm:grid-cols-2  (for styeling of tow buttons{% endcomment %}
+        <div class="mt-10 grid  gap-x-6 gap-y-4 ">
+          {% comment %} <button type="button" class="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50">Pay $220</button> {% endcomment %}
+          {% if not chat_request %}
+            <button @click="request_contact_modal=true" type="button" class="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-50 px-8 py-3 text-base font-medium text-indigo-700 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50">Connect with Shadchan</button>
+          {% elif chat_request.rejected %}
+            <button type="button" disabled class="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-50 px-8 py-3 text-base font-medium text-yellow-600 focus:outline-none opacity-25">Request denied</button>
+          {% elif chat_request.accepted %}
+            <a href="{% url 'chat_room' conversation_name request.user.id %}"  class="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-50 px-8 py-3 text-base font-medium text-indigo-700 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50">Message Shadchan</a>
+          {% else %}
+          <button type="button" disabled class="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-50 px-8 py-3 text-base font-medium text-indigo-700 opacity-25">Request Awaiting Approval</button>
+          {% endif %}
+        </div>
+
+        <div class="mt-10 border-t border-gray-200 pt-10">
+          <h3 class="text-sm font-medium text-gray-900">Highlights</h3>
+          <div class="prose prose-sm mt-4 text-gray-500">
+            {% if shadchan.shadchan_profile.highlights %}
+              <ul role="list">
+                {% for highlight in shadchan.shadchan_profile.highlights %}
+                  <li>{{ highlight }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        </div>
+
+        {% comment %} <div class="mt-10 border-t border-gray-200 pt-10">
+          <h3 class="text-sm font-medium text-gray-900">License</h3>
+          <p class="mt-4 text-sm text-gray-500">For personal and professional use. You cannot resell or redistribute these icons in their original or modified state. <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Read full license</a></p>
+        </div> {% endcomment %}
+
+        <div class="mt-10 border-t border-gray-200 pt-10">
+          <h3 class="text-sm font-medium text-gray-900">Contact</h3>
+          <ul role="list" class="mt-4 flex  space-x-6">
+            {% if not chat_request_accepted %}
+                  <span class="text-xs text-gray-400">Create a shadchan request to view info</span>
+
+    {% comment %} 
+    <div class="relative">
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer tooltip">
+          <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM8.94 6.94a.75.75 0 11-1.061-1.061 3 3 0 112.871 5.026v.345a.75.75 0 01-1.5 0v-.5c0-.72.57-1.172 1.081-1.287A1.5 1.5 0 108.94 6.94zM10 15a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+          </svg>
+          <span class="tooltiptext rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset">{{ shadchan.shadchan_profile.public_phone_number }}</span>
+        </div>
+    </div> 
+    {% endcomment %}
+ <li>
+                    <a class="text-gray-400">
+                      <span class="sr-only">Phone</span>
+                      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                      </svg>
+                    </a>
+                  </li>
+                  <li>
+                  <a class="text-gray-400">
+                      <span class="sr-only">Email</span>
+                      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                      </svg>
+                    </a>
+                  </li> 
+
+
+                  {% comment %}
+                  <li>
+                  <a href="#" class="flex h-6 w-6 items-center justify-center text-gray-400 hover:text-gray-500 cursor-not-allowed opacity-25">
+                      <span class="sr-only">Chat</span>
+                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+                        </svg>
+                    </a>
+                  </li>
+                {% endcomment %}
+            {% else %}
+            {% comment %} IF THE USER IS ACCEPTED {% endcomment %}
+           <li class="relative">
+              <a href="tel:{{ shadchan.shadchan_profile.public_phone_number }}" class="absolute inset-y-0 right-0 cursor-pointer tooltip flex h-6 w-6 justify-center text-gray-400 hover:text-gray-500">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                </svg>
+                  <span class="tooltiptext rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset">{{ shadchan.shadchan_profile.public_phone_number }}</span>
+                </a>
+              </li>
+              <li class="relative">
+                <a href="{{ 'mailto:'|add:shadchan.shadchan_profile.public_email }}" class="absolute inset-y-0 right-0 cursor-pointer tooltip flex h-6 w-6 justify-center text-gray-400 hover:text-gray-500">
+                  <span class="sr-only">Email</span>
+                  <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                  </svg>
+                  <span class="tooltiptext rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset">{{ shadchan.shadchan_profile.public_email }}</span>
+              </a>
+            </li>
+            {% comment %} <li>
+            <a href="{% if chat_request.accepted %} {% url 'chat_room' conversation_name request.user.id %} {% else %}# {% endif %}" class="flex h-6 w-6 items-center justify-center text-gray-400 hover:text-gray-500 {% if not chat_request.accepted %}cursor-not-allowed opacity-25{% endif %}">
+                <span class="sr-only">Chat</span>
+                  <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+                  </svg>
+              </a>
+            </li> {% endcomment %}
+
+            {% endif %}
+          </ul>
+        
+        </div>
+      </div>
+      
+      <div class="mx-auto mt-16 w-full max-w-4xl lg:col-span-4 lg:mt-0 lg:max-w-none" x-data="{selected_button: '1'}">
+        <div>
+          <div class="border-b border-gray-200">
+            <div class="-mb-px flex space-x-8" aria-orientation="horizontal" role="tablist">
+              <!-- Selected: "border-indigo-600 text-indigo-600", Not Selected: "border-transparent text-gray-700 hover:border-gray-300 hover:text-gray-800" -->
+              <button id="tab-license" class="border-transparent text-gray-700 hover:border-gray-300 hover:text-gray-800 whitespace-nowrap border-b-2 py-6 text-sm font-medium" x-bind:class="{'border-indigo-600 text-indigo-600': selected_button=='1'}" aria-controls="tab-panel-license" role="tab" type="button" @click="selected_button='1'">Guideline</button>
+              <button id="tab-faq" class="border-transparent text-gray-700 hover:border-gray-300 hover:text-gray-800 whitespace-nowrap border-b-2 py-6 text-sm font-medium" x-bind:class="{'border-indigo-600 text-indigo-600': selected_button=='2'}"  aria-controls="tab-panel-faq" role="tab" type="button" @click="selected_button='2'">FAQ</button>
+              {% comment %} <button id="tab-reviews" class="border-transparent text-gray-700 hover:border-gray-300 hover:text-gray-800 whitespace-nowrap border-b-2 py-6 text-sm font-medium" x-bind:class="{'border-indigo-600 text-indigo-600': selected_button=='0'}"aria-controls="tab-panel-reviews" role="tab" type="button" @click="selected_button='0'">Customer Reviews</button> {% endcomment %}
+            </div>
+          </div>
+
+          <!-- 'Customer Reviews' panel, show/hide based on tab state -->
+          <div id="tab-panel-reviews" class="-mb-10" aria-labelledby="tab-reviews" role="tabpanel" tabindex="0" x-show="selected_button=='0'" x-cloak>
+            <h3 class="sr-only ">Reviews</h3>
+
+            {% for review in shadchan.shadchan_profile.shadchan_reviews.all %}
+              <div class="flex space-x-4 text-sm text-gray-500">
+                <div class="flex-none py-10">
+                	<img class="h-10 w-10 rounded-full bg-gray-100" src="\static\images\boysAvatar.jpg" alt="user Avatar">
+                </div>
+                <div class="py-10">
+                  <h3 class="font-medium text-gray-900">{{ review.user.first_name }}</h3>
+                  <p x-data="timeHandler()" x-init="getLocalTime('{{ review.created|date:'c' }}')">
+                      <time x-text="localTime" datetime="{{ review.created }}"></time>
+                  </p>
+                  <div class="mt-4 flex items-center">
+                    <!-- Active: "text-yellow-400", Default: "text-gray-300" -->
+                    
+                    {% for i in stars %}
+                        <svg class="h-5 w-5 flex-shrink-0
+                            {% if review.rating >= i %} text-yellow-400 {% else %} text-gray-300 {% endif %}" 
+                            viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
+                        </svg>
+                    {% endfor %}
+                  </div>
+                  <p class="sr-only">{{ review.rating }} out of 5 stars</p>
+
+                  <div class="prose prose-sm mt-4 max-w-none text-gray-500">
+                    <p>{{ review.review }}</p>
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+              <p class="text-gray-prose prose-sm mt-10 max-w-none text-gray-500">No reviews</p>
+            {% endfor %}
+            <!-- More reviews... -->
+          </div>
+
+          <!-- 'License' panel, show/hide based on tab state -->
+          <div id="tab-panel-license" class="pt-10 max-w-[500px]" aria-labelledby="tab-license" role="tabpanel" tabindex="0" x-show="selected_button=='1'" x-cloak>
+            <h3 class="sr-only">License</h3>
+            <div class="prose prose-sm max-w-none text-gray-500">
+                {% comment %} <h4>Overview</h4> {% endcomment %}
+                {% comment %} <p>For personal and professional use. You cannot resell or redistribute these icons in their original or modified state.</p> {% endcomment %}
+                {% comment %} <h4 class="mt-2">{{ guideline.title }}</h4> {% endcomment %}
+                {% comment %} {{ guideline.guideline|safe}} {% endcomment %}
+                {{ shadchan.shadchan_profile.shadchan_guidelines.guideline|safe|default:"Your Guidelines Go Here" }}
+            </div>
+          </div>
+          <!-- 'FAQ' panel, show/hide based on tab state -->
+          <div id="tab-panel-faq" class="text-sm text-gray-500 max-w-[500px]" aria-labelledby="tab-faq" role="tabpanel" tabindex="0" x-show="selected_button=='2'" x-cloak>
+            <h3 class="sr-only">Frequently Asked Questions</h3>
+            <dl>
+            {% for faq in shadchan.shadchan_profile.shadchan_faq.all %}
+                {% if forloop.counter > 1 %}
+                <span class="border-t border-gray-200"></span>
+                {% endif %}
+                <dt class="mt-10 font-medium text-gray-900">{{ faq.question }}</dt>
+                <dd class="prose prose-sm mt-2 max-w-none text-gray-500">
+                    <p>{{ faq.answer|safe  }}</p>
+                </dd>
+            {% empty %}
+                <p class="mt-10 font-medium text-gray-900">No FAQs</p>
+            {% endfor %}
+            </dl>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+function timeHandler() {
+    return {
+        localTime: '',
+        getLocalTime(utcTime) {
+            let date = new Date(utcTime);
+            this.localTime = date.toLocaleDateString();
+        }
+    }
+}
+</script>
+{% endblock content %}

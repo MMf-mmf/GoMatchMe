@@ -1,0 +1,40 @@
+wagtail
+Pillow
+Django
+postgres
+django-htmx
+whitenoise
+nh3
+googlemaps
+django-countries
+pypdf
+stripe               # for payments
+environs[django]
+psycopg
+django-widget-tweaks # to add css classes and other attributes directrly in the html to elements given to us from a django form
+django-anymail       # to send emails via any email provider
+django-allauth       # for user authentication
+#django-twilio        # send text messages
+twilio
+channels[daphne]             # for websockets
+channels_redis       # for redis to work with channels websockets
+djangorestframework
+djangorestframework-simplejwt
+django-phonenumber-field[phonenumbers]
+django-storages      # for handling static files in production juch as storing files on a remote server like AWS S3 or google cloud storage
+# django-ckeditor      # for a rich text editor not supported
+django-prose-editor # switch to this editor from the django-ckeditor
+django-select2
+django-redis
+boto3                # for AWS S3
+celery
+django-hosts
+redis
+django-cors-headers
+##### Production ######
+
+sentry-sdk[django]
+# django-taggit # this will be istalled as a dependency of wagtail if wagtal is ever removed it should be added back in as a stand alone package
+
+python-dateutil
+django-recaptcha
